@@ -21,6 +21,7 @@ namespace AnyDeskAB {
         private string adExeFileName;
         private string settingsFileName;
         private int maxConfBackups = 10;
+        private long lastConfigUpdate;
 
         private TreeNode selectedNode;
         private bool ignoreTextBoxEvents = false;
@@ -46,6 +47,7 @@ namespace AnyDeskAB {
 
                 adConfigMonitor = new FileSystemWatcher((new FileInfo(adConfigFileName)).Directory.FullName) {
                     Filter = "*.conf",
+                    NotifyFilter = NotifyFilters.LastWrite,
                     EnableRaisingEvents = true
                 };
                 SetupEventhandlers();
@@ -118,7 +120,10 @@ namespace AnyDeskAB {
 
         private void SetupEventhandlers() {
             adConfigMonitor.Changed += (object o, FileSystemEventArgs e) => {
-                if(e.FullPath == adConfigFileName) this.Invoke((MethodInvoker)delegate { LoadAddressBook(); });
+                if(e.FullPath == adConfigFileName && (DateTime.Now.Ticks - lastConfigUpdate > 500000)) {
+                    lastConfigUpdate = DateTime.Now.Ticks;
+                    this.Invoke((MethodInvoker)delegate { LoadAddressBook(); });
+                }
             };
 
             treeViewItems.MouseDoubleClick += (object o, MouseEventArgs e) => {
@@ -296,6 +301,7 @@ namespace AnyDeskAB {
 
         #region TreeView Management
         private void UpdateUI() {
+            Debug.WriteLine("HIT");
             List<string> expandedNodes = Helpers.GetExpandedNodes(treeViewItems.Nodes);
 
             // Dirty trick to prevent flickering
