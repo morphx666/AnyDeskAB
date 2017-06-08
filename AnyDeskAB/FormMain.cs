@@ -20,6 +20,7 @@ namespace AnyDeskAB {
         private string adConfigFileName;
         private string adExeFileName;
         private string settingsFileName;
+        private int maxConfBackups = 10;
 
         private TreeNode selectedNode;
 
@@ -81,6 +82,13 @@ namespace AnyDeskAB {
                 bakFileName = $"{adConfigFileName}-{n:00}.bak";
                 if(File.Exists(bakFileName)) {
                     n += 1;
+                    if(n == maxConfBackups) {
+                        File.Delete($"{adConfigFileName}-00.bak");
+                        for(n = 1; n < maxConfBackups; n++) {
+                            File.Move($"{adConfigFileName}-{n:00}.bak", $"{adConfigFileName}-{n - 1:00}.bak");
+                        }
+                        break;
+                    }
                     continue;
                 } else
                     break;
