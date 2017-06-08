@@ -171,6 +171,7 @@ namespace AnyDeskAB {
             deleteToolStripMenuItem.Click += delegate { DeleteItem(); };
 
             textBoxDescription.TextChanged += delegate { if(!ignoreTextBoxEvents) ((Item)selectedNode.Tag).Description = textBoxDescription.Text; };
+            linkLabelConnect.Click += delegate { Connect(); };
 
             this.FormClosing += delegate { SaveSettings(true); };
         }
@@ -290,13 +291,13 @@ namespace AnyDeskAB {
             labelName.Text = n.Text;
             if(n.Tag is Item i) {
                 labelID.Text = i.Id;
-                labelAddress.Text = i.Address;
+                linkLabelConnect.Text = i.Address;
                 labelAlias.Text = i.Alias;
                 textBoxDescription.Text = i.Description;
                 textBoxDescription.Visible = true;
             } else {
                 labelID.Text = "";
-                labelAddress.Text = "";
+                linkLabelConnect.Text = "";
                 labelAlias.Text = "";
                 textBoxDescription.Visible = false;
             }
