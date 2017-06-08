@@ -57,7 +57,10 @@ namespace AnyDeskAB {
                             </settings>";
 
             XDocument.Parse(xml).Save(settingsFileName);
-            if(updateConf) UpdateUserConf();
+            if(updateConf)
+                UpdateUserConf();
+            else
+                UpdateUI();
         }
 
         private void UpdateUserConf() {
