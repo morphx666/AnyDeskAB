@@ -29,26 +29,30 @@ namespace AnyDeskAB {
             InitializeComponent();
 
             // TODO: Inform the user some paths are invalid and quit the program
-            SetupPaths();
-            LoadAddressBook();
-            treeViewItems.Nodes[0].Expand();
+            if(SetupPaths()) {
+                LoadAddressBook();
+                treeViewItems.Nodes[0].Expand();
 
-            adConfigMonitor = new FileSystemWatcher((new FileInfo(adConfigFileName)).Directory.FullName) {
-                Filter = "*.conf",
-                EnableRaisingEvents = true
-            };
-            SetupEventhandlers();
+                adConfigMonitor = new FileSystemWatcher((new FileInfo(adConfigFileName)).Directory.FullName) {
+                    Filter = "*.conf",
+                    EnableRaisingEvents = true
+                };
+                SetupEventhandlers();
+            } else {
+                MessageBox.Show("Unable to initialize", "Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
         }
 
         private void SaveSettings() {
             string xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
                             <settings>
                                 <groups>{string.Concat(from Group g in groups select g.ToXML().ToString())}</groups>
+                                <expandedNodes>{string.Concat(from en in GetExpandedNodes(treeViewItems.Nodes) select $"<node>{en}</node>")}</expandedNodes>
                             </settings>";
 
             XDocument.Parse(xml).Save(settingsFileName);
             UpdateUserConf();
-            //UpdateUI();
         }
 
         private void UpdateUserConf() {
@@ -146,9 +150,9 @@ namespace AnyDeskAB {
             addGroupToolStripMenuItem.Click += delegate {
                 if(selectedNode.Tag is Item) selectedNode = selectedNode.Parent;
                 Group pg = ((Group)selectedNode.Tag);
-                Group g = new Group(pg, "<New Group>");
-                pg.Groups.Add(g);
-                selectedNode = AddGroupNode(g, selectedNode);
+                Group ng = new Group(pg, "<New Group>");
+                pg.Groups.Add(ng);
+                selectedNode = AddGroupNode(ng, selectedNode);
                 treeViewItems.SelectedNode = selectedNode;
                 selectedNode.Expand();
                 selectedNode.BeginEdit();
@@ -164,6 +168,7 @@ namespace AnyDeskAB {
         }
 
         private void AddItem() {
+            throw new NotImplementedException();
         }
 
         private void DeleteItem() {
@@ -208,6 +213,7 @@ namespace AnyDeskAB {
         private void LoadAddressBook() {
             groups = new List<Group>();
             Group adg = new Group(null, "");
+            List<string> expandedNodes = new List<string>();
 
             foreach(string line in ReadFile.ReadLines(adConfigFileName)) {
                 if(line.Contains("ad.roster.items")) {
@@ -242,6 +248,11 @@ namespace AnyDeskAB {
                 foreach(Item i in adg.Items) {
                     if(!rg.ItemExists(i)) rg.Items.Add((Item)i.Clone(rg));
                 }
+
+                // Restore expanded nodes
+                foreach(XElement xml in xDoc.Descendants("node")) {
+                    expandedNodes.Add(xml.Value);
+                }
             }
 
             if(!groups.Any()) {
@@ -251,6 +262,7 @@ namespace AnyDeskAB {
             }
 
             UpdateUI();
+            SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
         }
 
         private void UpdateUI() {
