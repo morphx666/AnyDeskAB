@@ -266,7 +266,7 @@ namespace AnyDeskAB {
             treeViewItems.DrawToBitmap((Bitmap)this.BackgroundImage, new Rectangle(treeViewItems.Location, treeViewItems.Size));
 
             treeViewItems.Visible = false;
-            treeViewItems.SuspendLayout();
+            treeViewItems.BeginUpdate();
             treeViewItems.Nodes.Clear();
             foreach(Group g in groups.OrderBy(grp => grp.Name)) {
                 AddGroupNode(g, null);
@@ -275,20 +275,22 @@ namespace AnyDeskAB {
             if(selectedNode != null) SelectNode(treeViewItems.Nodes, selectedNode.Text);
             Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
 
-            treeViewItems.ResumeLayout();
+            treeViewItems.EndUpdate();
             treeViewItems.Visible = true;
             this.BackgroundImage = null;
         }
 
         private TreeNode AddGroupNode(Group g, TreeNode parentNode) {
-            TreeNode n;
+            TreeNode n = new TreeNode(g.Name) {
+                NodeFont = new Font(this.Font, FontStyle.Bold),
+                Tag = g
+            };
+
             if(parentNode == null) {
-                n = treeViewItems.Nodes.Add(g.Name);
+                treeViewItems.Nodes.Add(n);
             } else {
-                n = parentNode.Nodes.Add(g.Name);
+                parentNode.Nodes.Add(n);
             }
-            n.NodeFont = new Font(this.Font, FontStyle.Bold);
-            n.Tag = g;
 
             foreach(Item i in g.Items.OrderBy(it => it.Name)) {
                 n.Nodes.Add(i.ToString()).Tag = i;
