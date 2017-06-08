@@ -115,15 +115,12 @@ namespace AnyDeskAB {
                 if(n == null || n.Tag is Group) return;
                 Connect();
             };
-            treeViewItems.MouseDown += (object o, MouseEventArgs e) => {
-                TreeNode n = treeViewItems.GetNodeAt(e.Location);
-                if(n == null) return;
-                if(e.Button == MouseButtons.Right)
-                    HandleNodeSelected(n);
-                else
-                    UpdateDetails(n);
+            treeViewItems.AfterSelect += delegate {
+                selectedNode = treeViewItems.SelectedNode;
+
+                if(selectedNode == null) return;
+                HandleNodeSelected(selectedNode);
             };
-            treeViewItems.AfterSelect += delegate { selectedNode = treeViewItems.SelectedNode; };
             treeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
                 if(e.Label != null && e.Label != "") {
                     ((ADItem)e.Node.Tag).Name = e.Label;
@@ -173,7 +170,10 @@ namespace AnyDeskAB {
             textBoxDescription.TextChanged += delegate { if(!ignoreTextBoxEvents) ((Item)selectedNode.Tag).Description = textBoxDescription.Text; };
             linkLabelConnect.Click += delegate { Connect(); };
 
-            this.FormClosing += delegate { SaveSettings(true); };
+            this.FormClosing += delegate {
+                adConfigMonitor.Dispose();
+                SaveSettings(true);
+            };
         }
 
         void HandleNodeSelected(TreeNode n) {
