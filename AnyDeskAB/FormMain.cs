@@ -61,6 +61,7 @@ namespace AnyDeskAB {
         }
 
         private void UpdateUserConf() {
+            string originalConfig = File.ReadAllText(adConfigFileName);
             StringBuilder sb = new StringBuilder();
             List<Item> items = groups[0].GetAllItems();
 
@@ -75,6 +76,9 @@ namespace AnyDeskAB {
                     sb.AppendLine(line);
                 }
             }
+
+            string newConfig = sb.ToString();
+            if(originalConfig == newConfig) return;
 
             int n = 0;
             string bakFileName;
@@ -94,7 +98,7 @@ namespace AnyDeskAB {
                     break;
             }
             File.Copy(adConfigFileName, bakFileName);
-            File.WriteAllText(adConfigFileName, sb.ToString());
+            File.WriteAllText(adConfigFileName, newConfig);
         }
 
         private void SetupEventhandlers() {
