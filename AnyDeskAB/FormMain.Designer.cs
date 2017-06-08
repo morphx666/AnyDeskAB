@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.treeViewItems = new System.Windows.Forms.TreeView();
             this.contextMenuStripOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -190,6 +191,7 @@
             this.Controls.Add(this.treeViewItems);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AnyDesk AddressBook";
