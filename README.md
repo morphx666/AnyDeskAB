@@ -2,4 +2,4 @@
 AnyDesk AddressBook
 
 This is in a very early stage of development.
-Eventually, it should provide a full featured AddressBook system to be used with AnyDesk.
+Eventually, it should provide a fully featured AddressBook system for [AnyDesk](https://anydesk.com).
