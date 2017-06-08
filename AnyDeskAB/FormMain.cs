@@ -48,7 +48,7 @@ namespace AnyDeskAB {
         }
 
         #region Configuration Management
-        private void SaveSettings() {
+        private void SaveSettings(bool updateConf) {
             string xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
                             <settings>
                                 <groups>{string.Concat(from Group g in groups select g.ToXML().ToString())}</groups>
@@ -56,7 +56,7 @@ namespace AnyDeskAB {
                             </settings>";
 
             XDocument.Parse(xml).Save(settingsFileName);
-            UpdateUserConf();
+            if(updateConf) UpdateUserConf();
         }
 
         private void UpdateUserConf() {
@@ -106,7 +106,10 @@ namespace AnyDeskAB {
             };
             treeViewItems.AfterSelect += delegate { selectedNode = treeViewItems.SelectedNode; };
             treeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
-                if(e.Label != null && e.Label != "") ((ADItem)e.Node.Tag).Name = e.Label;
+                if(e.Label != null && e.Label != "") {
+                    ((ADItem)e.Node.Tag).Name = e.Label;
+                    SaveSettings(true);
+                }
             };
             treeViewItems.BeforeLabelEdit += (object o, NodeLabelEditEventArgs e) => e.CancelEdit = (e.Node.Parent == null);
             treeViewItems.ItemDrag += (object o, ItemDragEventArgs e) => {
@@ -138,7 +141,7 @@ namespace AnyDeskAB {
                         ((Group)sg.Parent).Groups.Remove(sg);
                         tg.Groups.Add((Group)sg.Clone(sg));
                     }
-                    SaveSettings();
+                    SaveSettings(false);
                 }
             };
 
@@ -150,12 +153,11 @@ namespace AnyDeskAB {
 
             this.FormClosing += delegate {
                 adConfigMonitor.Dispose();
-                SaveSettings();
+                SaveSettings(true);
             };
         }
 
         void HandleNodeSelected(TreeNode n) {
-            selectedNode = n;
             treeViewItems.SelectedNode = n;
 
             if(n.Tag is Group) {
@@ -273,11 +275,11 @@ namespace AnyDeskAB {
             n.NodeFont = new Font(this.Font, FontStyle.Bold);
             n.Tag = g;
 
-            foreach(Item i in g.Items.OrderBy(itm => itm.ToString())) {
+            foreach(Item i in g.Items.OrderBy(it => it.Name)) {
                 n.Nodes.Add(i.ToString()).Tag = i;
             }
 
-            foreach(Group sg in g.Groups) {
+            foreach(Group sg in g.Groups.OrderBy(sgt => sgt.Name)) {
                 AddGroupNode(sg, n);
             }
 
@@ -343,7 +345,7 @@ namespace AnyDeskAB {
                     }
                     ((Group)g.Parent).Groups.Remove(g);
                 }
-                SaveSettings();
+                SaveSettings(true);
                 UpdateUI();
             }
         }
