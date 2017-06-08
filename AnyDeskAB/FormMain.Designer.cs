@@ -34,7 +34,14 @@
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sep03ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelDetails = new System.Windows.Forms.Panel();
+            this.labelAlias = new System.Windows.Forms.Label();
+            this.labelAddress = new System.Windows.Forms.Label();
+            this.labelID = new System.Windows.Forms.Label();
+            this.labelName = new System.Windows.Forms.Label();
+            this.textBoxDescription = new System.Windows.Forms.TextBox();
             this.contextMenuStripOptions.SuspendLayout();
+            this.panelDetails.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeViewItems
@@ -48,7 +55,7 @@
             this.treeViewItems.LabelEdit = true;
             this.treeViewItems.Location = new System.Drawing.Point(12, 14);
             this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(548, 466);
+            this.treeViewItems.Size = new System.Drawing.Size(453, 466);
             this.treeViewItems.TabIndex = 0;
             // 
             // contextMenuStripOptions
@@ -110,12 +117,75 @@
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             // 
+            // panelDetails
+            // 
+            this.panelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDetails.Controls.Add(this.textBoxDescription);
+            this.panelDetails.Controls.Add(this.labelAlias);
+            this.panelDetails.Controls.Add(this.labelAddress);
+            this.panelDetails.Controls.Add(this.labelID);
+            this.panelDetails.Controls.Add(this.labelName);
+            this.panelDetails.Location = new System.Drawing.Point(471, 14);
+            this.panelDetails.Name = "panelDetails";
+            this.panelDetails.Padding = new System.Windows.Forms.Padding(3);
+            this.panelDetails.Size = new System.Drawing.Size(269, 466);
+            this.panelDetails.TabIndex = 1;
+            // 
+            // labelAlias
+            // 
+            this.labelAlias.AutoSize = true;
+            this.labelAlias.Location = new System.Drawing.Point(7, 58);
+            this.labelAlias.Name = "labelAlias";
+            this.labelAlias.Size = new System.Drawing.Size(63, 17);
+            this.labelAlias.TabIndex = 3;
+            this.labelAlias.Text = "labelAlias";
+            // 
+            // labelAddress
+            // 
+            this.labelAddress.AutoSize = true;
+            this.labelAddress.Location = new System.Drawing.Point(7, 41);
+            this.labelAddress.Name = "labelAddress";
+            this.labelAddress.Size = new System.Drawing.Size(84, 17);
+            this.labelAddress.TabIndex = 2;
+            this.labelAddress.Text = "labelAddress";
+            // 
+            // labelID
+            // 
+            this.labelID.AutoSize = true;
+            this.labelID.Location = new System.Drawing.Point(7, 24);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(48, 17);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "labelID";
+            // 
+            // labelName
+            // 
+            this.labelName.AutoSize = true;
+            this.labelName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelName.Location = new System.Drawing.Point(6, 3);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(94, 21);
+            this.labelName.TabIndex = 0;
+            this.labelName.Text = "labelName";
+            // 
+            // textBoxDescription
+            // 
+            this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxDescription.Location = new System.Drawing.Point(10, 78);
+            this.textBoxDescription.Multiline = true;
+            this.textBoxDescription.Name = "textBoxDescription";
+            this.textBoxDescription.Size = new System.Drawing.Size(253, 135);
+            this.textBoxDescription.TabIndex = 4;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(572, 494);
+            this.ClientSize = new System.Drawing.Size(752, 494);
+            this.Controls.Add(this.panelDetails);
             this.Controls.Add(this.treeViewItems);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -123,6 +193,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AnyDesk AddressBook";
             this.contextMenuStripOptions.ResumeLayout(false);
+            this.panelDetails.ResumeLayout(false);
+            this.panelDetails.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -139,6 +211,12 @@
         private System.Windows.Forms.ToolStripMenuItem addItemToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator sep02ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator sep03ToolStripMenuItem;
+        private System.Windows.Forms.Panel panelDetails;
+        private System.Windows.Forms.Label labelName;
+        private System.Windows.Forms.Label labelID;
+        private System.Windows.Forms.Label labelAddress;
+        private System.Windows.Forms.Label labelAlias;
+        private System.Windows.Forms.TextBox textBoxDescription;
     }
 }
 

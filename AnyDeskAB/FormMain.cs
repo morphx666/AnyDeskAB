@@ -23,6 +23,7 @@ namespace AnyDeskAB {
         private int maxConfBackups = 10;
 
         private TreeNode selectedNode;
+        private bool ignoreTextBoxEvents = false;
 
         FileSystemWatcher adConfigMonitor;
 
@@ -116,8 +117,11 @@ namespace AnyDeskAB {
             };
             treeViewItems.MouseDown += (object o, MouseEventArgs e) => {
                 TreeNode n = treeViewItems.GetNodeAt(e.Location);
-                if(n == null || e.Button != MouseButtons.Right) return;
-                HandleNodeSelected(n);
+                if(n == null) return;
+                if(e.Button == MouseButtons.Right)
+                    HandleNodeSelected(n);
+                else
+                    UpdateDetails(n);
             };
             treeViewItems.AfterSelect += delegate { selectedNode = treeViewItems.SelectedNode; };
             treeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
@@ -166,10 +170,9 @@ namespace AnyDeskAB {
             renameToolStripMenuItem.Click += delegate { selectedNode.BeginEdit(); };
             deleteToolStripMenuItem.Click += delegate { DeleteItem(); };
 
-            this.FormClosing += delegate {
-                adConfigMonitor.Dispose();
-                SaveSettings(true);
-            };
+            textBoxDescription.TextChanged += delegate { if(!ignoreTextBoxEvents) ((Item)selectedNode.Tag).Description = textBoxDescription.Text; };
+
+            this.FormClosing += delegate { SaveSettings(true); };
         }
 
         void HandleNodeSelected(TreeNode n) {
@@ -185,6 +188,8 @@ namespace AnyDeskAB {
                 deleteToolStripMenuItem.Enabled = true;
             }
             renameToolStripMenuItem.Enabled = n.Parent != null;
+
+            UpdateDetails(n);
         }
 
         private void LoadAddressBook() {
@@ -278,6 +283,24 @@ namespace AnyDeskAB {
             treeViewItems.EndUpdate();
             treeViewItems.Visible = true;
             this.BackgroundImage = null;
+        }
+
+        private void UpdateDetails(TreeNode n) {
+            ignoreTextBoxEvents = true;
+            labelName.Text = n.Text;
+            if(n.Tag is Item i) {
+                labelID.Text = i.Id;
+                labelAddress.Text = i.Address;
+                labelAlias.Text = i.Alias;
+                textBoxDescription.Text = i.Description;
+                textBoxDescription.Visible = true;
+            } else {
+                labelID.Text = "";
+                labelAddress.Text = "";
+                labelAlias.Text = "";
+                textBoxDescription.Visible = false;
+            }
+            ignoreTextBoxEvents = false;
         }
 
         private TreeNode AddGroupNode(Group g, TreeNode parentNode) {
