@@ -48,6 +48,7 @@
     <Compile Include="Classes\AnyDesk\ADItem.cs" />
     <Compile Include="Classes\Group.cs" />
     <Compile Include="Classes\AnyDesk\IADItem.cs" />
+    <Compile Include="Classes\Helpers.cs" />
     <Compile Include="Classes\Item.cs" />
     <Compile Include="Classes\ReadFile.cs" />
     <Compile Include="Controls\UserControlADItemUI.cs">

@@ -31,7 +31,10 @@ namespace AnyDeskAB {
             // TODO: Inform the user some paths are invalid and quit the program
             if(SetupPaths()) {
                 LoadAddressBook();
-                treeViewItems.Nodes[0].Expand();
+
+                selectedNode = treeViewItems.Nodes[0];
+                selectedNode.Expand();
+                HandleNodeSelected(selectedNode);
 
                 adConfigMonitor = new FileSystemWatcher((new FileInfo(adConfigFileName)).Directory.FullName) {
                     Filter = "*.conf",
@@ -44,11 +47,12 @@ namespace AnyDeskAB {
             }
         }
 
+        #region Configuration Management
         private void SaveSettings() {
             string xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
                             <settings>
                                 <groups>{string.Concat(from Group g in groups select g.ToXML().ToString())}</groups>
-                                <expandedNodes>{string.Concat(from en in GetExpandedNodes(treeViewItems.Nodes) select $"<node>{en}</node>")}</expandedNodes>
+                                <expandedNodes>{string.Concat(from en in Helpers.GetExpandedNodes(treeViewItems.Nodes) select $"<node>{en}</node>")}</expandedNodes>
                             </settings>";
 
             XDocument.Parse(xml).Save(settingsFileName);
@@ -98,21 +102,13 @@ namespace AnyDeskAB {
             treeViewItems.MouseDown += (object o, MouseEventArgs e) => {
                 TreeNode n = treeViewItems.GetNodeAt(e.Location);
                 if(n == null || e.Button != MouseButtons.Right) return;
-
-                treeViewItems.SelectedNode = n;
-
-                if(n.Tag is Group) {
-                    connectToolStripMenuItem.Visible = false;
-                    sep01toolStripMenuItem.Visible = false;
-                    deleteToolStripMenuItem.Enabled = (selectedNode.Parent != null);
-                } else {
-                    connectToolStripMenuItem.Visible = true;
-                    sep01toolStripMenuItem.Visible = true;
-                    deleteToolStripMenuItem.Enabled = true;
-                }
+                HandleNodeSelected(n);
             };
             treeViewItems.AfterSelect += delegate { selectedNode = treeViewItems.SelectedNode; };
-            treeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => ((ADItem)e.Node.Tag).Name = e.Label;
+            treeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
+                if(e.Label != null && e.Label != "") ((ADItem)e.Node.Tag).Name = e.Label;
+            };
+            treeViewItems.BeforeLabelEdit += (object o, NodeLabelEditEventArgs e) => e.CancelEdit = (e.Node.Parent == null);
             treeViewItems.ItemDrag += (object o, ItemDragEventArgs e) => {
                 // TODO: Add support to drag groups
                 selectedNode = (TreeNode)e.Item;
@@ -147,17 +143,8 @@ namespace AnyDeskAB {
             };
 
             connectToolStripMenuItem.Click += delegate { Connect(); };
-            addGroupToolStripMenuItem.Click += delegate {
-                if(selectedNode.Tag is Item) selectedNode = selectedNode.Parent;
-                Group pg = ((Group)selectedNode.Tag);
-                Group ng = new Group(pg, "<New Group>");
-                pg.Groups.Add(ng);
-                selectedNode = AddGroupNode(ng, selectedNode);
-                treeViewItems.SelectedNode = selectedNode;
-                selectedNode.Expand();
-                selectedNode.BeginEdit();
-
-            };
+            addItemToolStripMenuItem.Click += delegate { AddItem(); };
+            addGroupToolStripMenuItem.Click += delegate { AddGroup(); };
             renameToolStripMenuItem.Click += delegate { selectedNode.BeginEdit(); };
             deleteToolStripMenuItem.Click += delegate { DeleteItem(); };
 
@@ -167,47 +154,20 @@ namespace AnyDeskAB {
             };
         }
 
-        private void AddItem() {
-            throw new NotImplementedException();
-        }
+        void HandleNodeSelected(TreeNode n) {
+            selectedNode = n;
+            treeViewItems.SelectedNode = n;
 
-        private void DeleteItem() {
-            string nodeType;
-            string extra = "";
-            if(selectedNode.Tag is Item) {
-                nodeType = "Connection Item";
+            if(n.Tag is Group) {
+                connectToolStripMenuItem.Visible = false;
+                sep01toolStripMenuItem.Visible = false;
+                deleteToolStripMenuItem.Enabled = (n.Parent != null);
             } else {
-                nodeType = "Group";
-                extra = $"{Environment.NewLine}{Environment.NewLine}Items under the {nodeType} '{selectedNode.Text}' will be moved to the root {nodeType} 'AnyDesk'";
+                connectToolStripMenuItem.Visible = true;
+                sep01toolStripMenuItem.Visible = true;
+                deleteToolStripMenuItem.Enabled = true;
             }
-            DialogResult ans = MessageBox.Show($"Are you sure you want to delete the {nodeType} '{selectedNode.Text}'?{extra}",
-                                                "Delete Confirmation",
-                                                MessageBoxButtons.YesNo,
-                                                MessageBoxIcon.Question);
-
-            if(ans == DialogResult.Yes) {
-                if(selectedNode.Tag is Item i) {
-                    ((Group)i.Parent).Items.Remove(i);
-                } else {
-                    nodeType = "Group";
-                    Group g = (Group)selectedNode.Tag;
-                    while(g.Items.Any()) {
-                        groups[0].Items.Add((Item)g.Items[0].Clone(groups[0]));
-                        g.Items.Remove(g.Items[0]);
-                    }
-                    while(g.Groups.Any()) {
-                        groups[0].Groups.Add((Group)g.Groups[0].Clone(groups[0]));
-                        g.Groups.Remove(g.Groups[0]);
-                    }
-                    ((Group)g.Parent).Groups.Remove(g);
-                }
-                SaveSettings();
-                UpdateUI();
-            }
-        }
-
-        private void Connect() {
-            Process.Start(adExeFileName, ((Item)selectedNode.Tag).Address);
+            renameToolStripMenuItem.Enabled = n.Parent != null;
         }
 
         private void LoadAddressBook() {
@@ -262,11 +222,27 @@ namespace AnyDeskAB {
             }
 
             UpdateUI();
-            SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
+            Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
         }
 
+        private bool SetupPaths() {
+            settingsFileName = Path.Combine((new DirectoryInfo(Application.UserAppDataPath)).Parent.FullName, "settings.dat");
+            adConfigFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\Roaming\AnyDesk\user.conf");
+            adExeFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"AnyDesk\AnyDesk.exe");
+
+            // Is the user like me and likes to install programs on multiple drives?
+            foreach(DriveInfo di in DriveInfo.GetDrives()) {
+                adExeFileName = di.Name.Substring(0, 1) + adExeFileName.Substring(1);
+                if(File.Exists(adExeFileName)) break;
+            }
+
+            return File.Exists(adConfigFileName) && File.Exists(adExeFileName);
+        }
+        #endregion
+
+        #region TreeView Management
         private void UpdateUI() {
-            List<string> expandedNodes = GetExpandedNodes(treeViewItems.Nodes);
+            List<string> expandedNodes = Helpers.GetExpandedNodes(treeViewItems.Nodes);
 
             // Dirty trick to prevent flickering
             this.BackgroundImage = new Bitmap(treeViewItems.Width, treeViewItems.Height);
@@ -280,41 +256,11 @@ namespace AnyDeskAB {
             }
 
             if(selectedNode != null) SelectNode(treeViewItems.Nodes, selectedNode.Text);
-            SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
+            Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
 
             treeViewItems.ResumeLayout();
             treeViewItems.Visible = true;
             this.BackgroundImage = null;
-        }
-
-        private void SetExpandedNodes(TreeNodeCollection nodes, List<string> expandedNodes) {
-            foreach(TreeNode n in nodes) {
-                if(expandedNodes.Contains(n.Text)) n.Expand();
-                SetExpandedNodes(n.Nodes, expandedNodes);
-            }
-        }
-
-        private List<string> GetExpandedNodes(TreeNodeCollection nodes) {
-            List<string> expandedNodes = new List<string>();
-
-            foreach(TreeNode n in nodes) {
-                if(n.IsExpanded) expandedNodes.Add(n.Text);
-                expandedNodes.AddRange(GetExpandedNodes(n.Nodes).ToArray());
-            }
-
-            return expandedNodes;
-        }
-
-        private void SelectNode(TreeNodeCollection nodes, string nodeText) {
-            foreach(TreeNode n in nodes) {
-                if(n.Text == nodeText) {
-                    n.EnsureVisible();
-                    treeViewItems.SelectedNode = n;
-                    selectedNode = n;
-                    break;
-                }
-                SelectNode(n.Nodes, nodeText);
-            }
         }
 
         private TreeNode AddGroupNode(Group g, TreeNode parentNode) {
@@ -338,18 +284,73 @@ namespace AnyDeskAB {
             return n;
         }
 
-        private bool SetupPaths() {
-            settingsFileName = Path.Combine((new DirectoryInfo(Application.UserAppDataPath)).Parent.FullName, "settings.dat");
-            adConfigFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\Roaming\AnyDesk\user.conf");
-            adExeFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"AnyDesk\AnyDesk.exe");
-
-            // Is the user like me and likes to install programs on multiple drives?
-            foreach(DriveInfo di in DriveInfo.GetDrives()) {
-                adExeFileName = di.Name.Substring(0, 1) + adExeFileName.Substring(1);
-                if(File.Exists(adExeFileName)) break;
+        private void SelectNode(TreeNodeCollection nodes, string nodeText) {
+            foreach(TreeNode n in nodes) {
+                if(n.Text == nodeText) {
+                    n.EnsureVisible();
+                    treeViewItems.SelectedNode = n;
+                    selectedNode = n;
+                    break;
+                }
+                SelectNode(n.Nodes, nodeText);
             }
-
-            return File.Exists(adConfigFileName) && File.Exists(adExeFileName);
         }
+        #endregion
+
+        #region User Actions
+        private void AddItem() {
+            MessageBox.Show("Not Implemented", "Add Item", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void AddGroup() {
+            if(selectedNode.Tag is Item) selectedNode = selectedNode.Parent;
+            Group pg = ((Group)selectedNode.Tag);
+            Group ng = new Group(pg, "<New Group>");
+            pg.Groups.Add(ng);
+            selectedNode = AddGroupNode(ng, selectedNode);
+            treeViewItems.SelectedNode = selectedNode;
+            selectedNode.Expand();
+            selectedNode.BeginEdit();
+        }
+
+        private void DeleteItem() {
+            string nodeType;
+            string extra = "";
+            if(selectedNode.Tag is Item) {
+                nodeType = "Connection Item";
+            } else {
+                nodeType = "Group";
+                extra = $"{Environment.NewLine}{Environment.NewLine}Items under the {nodeType} '{selectedNode.Text}' will be moved to the root {nodeType} 'AnyDesk'";
+            }
+            DialogResult ans = MessageBox.Show($"Are you sure you want to delete the {nodeType} '{selectedNode.Text}'?{extra}",
+                                                "Delete Confirmation",
+                                                MessageBoxButtons.YesNo,
+                                                MessageBoxIcon.Question);
+
+            if(ans == DialogResult.Yes) {
+                if(selectedNode.Tag is Item i) {
+                    ((Group)i.Parent).Items.Remove(i);
+                } else {
+                    nodeType = "Group";
+                    Group g = (Group)selectedNode.Tag;
+                    while(g.Items.Any()) {
+                        groups[0].Items.Add((Item)g.Items[0].Clone(groups[0]));
+                        g.Items.Remove(g.Items[0]);
+                    }
+                    while(g.Groups.Any()) {
+                        groups[0].Groups.Add((Group)g.Groups[0].Clone(groups[0]));
+                        g.Groups.Remove(g.Groups[0]);
+                    }
+                    ((Group)g.Parent).Groups.Remove(g);
+                }
+                SaveSettings();
+                UpdateUI();
+            }
+        }
+
+        private void Connect() {
+            Process.Start(adExeFileName, ((Item)selectedNode.Tag).Address);
+        }
+        #endregion
     }
 }
