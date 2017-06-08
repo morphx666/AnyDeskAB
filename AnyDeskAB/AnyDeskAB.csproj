@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icons8-Tree_Structure-64.ico</ApplicationIcon>
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,6 +54,12 @@
     <Compile Include="Classes\Helpers.cs" />
     <Compile Include="Classes\Item.cs" />
     <Compile Include="Classes\ReadFile.cs" />
+    <Compile Include="Controls\ScrollableTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ScrollableTreeView.Designer.cs">
+      <DependentUpon>ScrollableTreeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserControlADItemUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -97,7 +103,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icons8-Tree_Structure-64.ico" />
+    <Content Include="app.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

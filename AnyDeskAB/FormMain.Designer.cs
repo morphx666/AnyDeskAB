@@ -25,7 +25,7 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.treeViewItems = new System.Windows.Forms.TreeView();
+            this.treeViewItems = new AnyDeskAB.Controls.ScrollableTreeView();
             this.contextMenuStripOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sep01toolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
@@ -204,7 +204,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeViewItems;
+        private AnyDeskAB.Controls.ScrollableTreeView treeViewItems;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripOptions;
         private System.Windows.Forms.ToolStripMenuItem addGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;

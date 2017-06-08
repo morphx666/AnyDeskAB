@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 using AnyDeskAB.Classes;
@@ -24,6 +24,11 @@ namespace AnyDeskAB {
 
         private TreeNode selectedNode;
         private bool ignoreTextBoxEvents = false;
+        private bool isDragging = false;
+        private Point draggingLocation;
+        TreeNode dragginOverNode;
+
+        private Thread draggingMonitor;
 
         FileSystemWatcher adConfigMonitor;
 
@@ -43,9 +48,44 @@ namespace AnyDeskAB {
                     EnableRaisingEvents = true
                 };
                 SetupEventhandlers();
+
+                draggingMonitor = new Thread(DraggingMonitorLoop) {
+                    IsBackground = true
+                };
+                draggingMonitor.Start();
             } else {
                 MessageBox.Show("Unable to initialize", "Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
+            }
+        }
+
+        private void DraggingMonitorLoop() {
+            const int scrollMargin = 8;
+            TreeNode lastOver = null;
+            int overItemCount = 0;
+            while(true) {
+                if(isDragging && dragginOverNode != null) {
+                    if(draggingLocation.Y <= scrollMargin) {
+                        treeViewItems.ScrollUp();
+                    } else if(draggingLocation.Y >= treeViewItems.Height - scrollMargin) {
+                        treeViewItems.ScrollDown();
+                    } else if(lastOver != dragginOverNode) {
+                        this.Invoke((MethodInvoker)delegate {
+                            if(dragginOverNode.Nodes.Count > 0 && !dragginOverNode.IsExpanded) {
+                                lastOver = dragginOverNode;
+                                overItemCount = 0;
+                            } else {
+                                lastOver = null;
+                            }
+                        });
+                    } else if(lastOver == dragginOverNode && lastOver != null && ++overItemCount >= 10) {
+                        this.Invoke((MethodInvoker)delegate {
+                            dragginOverNode.Expand();
+                            lastOver = null;
+                        });
+                    }
+                }
+                Thread.Sleep(100);
             }
         }
 
@@ -115,6 +155,14 @@ namespace AnyDeskAB {
                 if(n == null || n.Tag is Group) return;
                 Connect();
             };
+            treeViewItems.MouseDown += (object o, MouseEventArgs e) => {
+                TreeNode n = treeViewItems.GetNodeAt(e.Location);
+                if(n == null || e.Button != MouseButtons.Right) return;
+                treeViewItems.SelectedNode = n;
+            };
+            treeViewItems.MouseUp += delegate { isDragging = false; };
+            treeViewItems.DragLeave += delegate { isDragging = false; };
+            treeViewItems.DragEnter += delegate { isDragging = true; };
             treeViewItems.AfterSelect += delegate {
                 selectedNode = treeViewItems.SelectedNode;
 
@@ -129,25 +177,27 @@ namespace AnyDeskAB {
             };
             treeViewItems.BeforeLabelEdit += (object o, NodeLabelEditEventArgs e) => e.CancelEdit = (e.Node.Parent == null);
             treeViewItems.ItemDrag += (object o, ItemDragEventArgs e) => {
-                // TODO: Add support to drag groups
                 selectedNode = (TreeNode)e.Item;
                 if(e.Button == MouseButtons.Left) {
+                    isDragging = true;
                     treeViewItems.SelectedNode = selectedNode;
                     treeViewItems.DoDragDrop(selectedNode, DragDropEffects.Move);
                 }
             };
             treeViewItems.DragOver += (object o, DragEventArgs e) => {
-                TreeNode overNode = treeViewItems.GetNodeAt(treeViewItems.PointToClient(new Point(e.X, e.Y)));
-                if(overNode == null || overNode.Tag is Item) {
+                draggingLocation = treeViewItems.PointToClient(new Point(e.X, e.Y));
+                dragginOverNode = treeViewItems.GetNodeAt(draggingLocation);
+                if(dragginOverNode == null || dragginOverNode.Tag is Item) {
                     e.Effect = DragDropEffects.None;
                 } else {
                     e.Effect = e.AllowedEffect;
                 }
             };
             treeViewItems.DragDrop += (object o, DragEventArgs e) => {
-                TreeNode overNode = treeViewItems.GetNodeAt(treeViewItems.PointToClient(new Point(e.X, e.Y)));
-                if(overNode != null) {
-                    Group tg = (Group)overNode.Tag;
+                dragginOverNode = treeViewItems.GetNodeAt(treeViewItems.PointToClient(new Point(e.X, e.Y)));
+                if(dragginOverNode != null) {
+                    Group tg = (Group)dragginOverNode.Tag;
+                    string nodeText = selectedNode.Text;
 
                     if(selectedNode.Tag is Item si) {
                         ((Group)si.Parent).Items.Remove(si);
@@ -158,6 +208,7 @@ namespace AnyDeskAB {
                         tg.Groups.Add((Group)sg.Clone(sg));
                     }
                     SaveSettings(false);
+                    SelectNode(treeViewItems.Nodes, nodeText);
                 }
             };
 
