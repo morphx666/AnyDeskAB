@@ -25,6 +25,7 @@ namespace AnyDeskAB {
         private TreeNode selectedNode;
         private bool ignoreTextBoxEvents = false;
         private bool isDragging = false;
+        private bool abortThreads = false;
         private Point draggingLocation;
         TreeNode dragginOverNode;
 
@@ -56,36 +57,6 @@ namespace AnyDeskAB {
             } else {
                 MessageBox.Show("Unable to initialize", "Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
-            }
-        }
-
-        private void DraggingMonitorLoop() {
-            const int scrollMargin = 8;
-            TreeNode lastOver = null;
-            int overItemCount = 0;
-            while(true) {
-                if(isDragging && dragginOverNode != null) {
-                    if(draggingLocation.Y <= scrollMargin) {
-                        treeViewItems.ScrollUp();
-                    } else if(draggingLocation.Y >= treeViewItems.Height - scrollMargin) {
-                        treeViewItems.ScrollDown();
-                    } else if(lastOver != dragginOverNode) {
-                        this.Invoke((MethodInvoker)delegate {
-                            if(dragginOverNode.Nodes.Count > 0 && !dragginOverNode.IsExpanded) {
-                                lastOver = dragginOverNode;
-                                overItemCount = 0;
-                            } else {
-                                lastOver = null;
-                            }
-                        });
-                    } else if(lastOver == dragginOverNode && lastOver != null && ++overItemCount >= 10) {
-                        this.Invoke((MethodInvoker)delegate {
-                            dragginOverNode.Expand();
-                            lastOver = null;
-                        });
-                    }
-                }
-                Thread.Sleep(100);
             }
         }
 
@@ -222,6 +193,10 @@ namespace AnyDeskAB {
             linkLabelConnect.Click += delegate { Connect(); };
 
             this.FormClosing += delegate {
+                abortThreads = true;
+                while(draggingMonitor.ThreadState == System.Threading.ThreadState.Background) {
+                    Thread.Sleep(100);
+                }
                 adConfigMonitor.Dispose();
                 SaveSettings(true);
             };
@@ -281,6 +256,11 @@ namespace AnyDeskAB {
                 List<Item> rgis = rg.GetAllItems();
                 foreach(Item i in adg.Items) {
                     if(!rg.ItemExists(i)) rg.Items.Add((Item)i.Clone(rg));
+                }
+
+                // Update any items that may have been changed from AnyDesk
+                foreach(Item i in rg.GetAllItems()) {
+                    i.Alias = adg.FindItem(i).Alias;
                 }
 
                 // Restore expanded nodes
@@ -387,6 +367,36 @@ namespace AnyDeskAB {
                     break;
                 }
                 SelectNode(n.Nodes, nodeText);
+            }
+        }
+
+        private void DraggingMonitorLoop() {
+            const int scrollMargin = 8;
+            TreeNode lastOver = null;
+            int overItemCount = 0;
+            while(!abortThreads) {
+                if(isDragging && dragginOverNode != null) {
+                    if(draggingLocation.Y <= scrollMargin) {
+                        treeViewItems.ScrollUp();
+                    } else if(draggingLocation.Y >= treeViewItems.Height - scrollMargin) {
+                        treeViewItems.ScrollDown();
+                    } else if(lastOver != dragginOverNode) {
+                        this.Invoke((MethodInvoker)delegate {
+                            if(dragginOverNode.Nodes.Count > 0 && !dragginOverNode.IsExpanded) {
+                                lastOver = dragginOverNode;
+                                overItemCount = 0;
+                            } else {
+                                lastOver = null;
+                            }
+                        });
+                    } else if(lastOver == dragginOverNode && lastOver != null && ++overItemCount >= 10) {
+                        this.Invoke((MethodInvoker)delegate {
+                            dragginOverNode.Expand();
+                            lastOver = null;
+                        });
+                    }
+                }
+                Thread.Sleep(100);
             }
         }
         #endregion
