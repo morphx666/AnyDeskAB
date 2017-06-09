@@ -36,11 +36,11 @@
             this.sep03ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelDetails = new System.Windows.Forms.Panel();
+            this.linkLabelConnect = new System.Windows.Forms.LinkLabel();
             this.textBoxDescription = new System.Windows.Forms.TextBox();
             this.labelAlias = new System.Windows.Forms.Label();
             this.labelID = new System.Windows.Forms.Label();
             this.labelName = new System.Windows.Forms.Label();
-            this.linkLabelConnect = new System.Windows.Forms.LinkLabel();
             this.contextMenuStripOptions.SuspendLayout();
             this.panelDetails.SuspendLayout();
             this.SuspendLayout();
@@ -133,6 +133,16 @@
             this.panelDetails.Size = new System.Drawing.Size(269, 466);
             this.panelDetails.TabIndex = 1;
             // 
+            // linkLabelConnect
+            // 
+            this.linkLabelConnect.AutoSize = true;
+            this.linkLabelConnect.Location = new System.Drawing.Point(7, 41);
+            this.linkLabelConnect.Name = "linkLabelConnect";
+            this.linkLabelConnect.Size = new System.Drawing.Size(105, 17);
+            this.linkLabelConnect.TabIndex = 5;
+            this.linkLabelConnect.TabStop = true;
+            this.linkLabelConnect.Text = "linkLabelConnect";
+            // 
             // textBoxDescription
             // 
             this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -171,16 +181,6 @@
             this.labelName.TabIndex = 0;
             this.labelName.Text = "labelName";
             // 
-            // linkLabelConnect
-            // 
-            this.linkLabelConnect.AutoSize = true;
-            this.linkLabelConnect.Location = new System.Drawing.Point(7, 41);
-            this.linkLabelConnect.Name = "linkLabelConnect";
-            this.linkLabelConnect.Size = new System.Drawing.Size(105, 17);
-            this.linkLabelConnect.TabIndex = 5;
-            this.linkLabelConnect.TabStop = true;
-            this.linkLabelConnect.Text = "linkLabelConnect";
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -192,6 +192,7 @@
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AnyDesk AddressBook";

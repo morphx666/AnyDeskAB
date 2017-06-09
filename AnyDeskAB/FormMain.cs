@@ -205,6 +205,22 @@ namespace AnyDeskAB {
                 adConfigMonitor.Dispose();
                 SaveSettings(true);
             };
+            this.KeyDown += (object o, KeyEventArgs e) => {
+                switch(e.KeyCode) {
+                    case Keys.F2:
+                        selectedNode?.BeginEdit();
+                        break;
+                    case Keys.Enter:
+                        Connect();
+                        // Avoid the freaking bell...
+                        e.Handled = true;
+                        e.SuppressKeyPress = true;
+                        break;
+                    case Keys.Delete:
+                        DeleteItem();
+                        break;
+                }
+            };
         }
 
         void HandleNodeSelected(TreeNode n) {
@@ -458,7 +474,9 @@ namespace AnyDeskAB {
         }
 
         private void Connect() {
-            Process.Start(adExeFileName, ((Item)selectedNode.Tag).Address);
+            if(selectedNode?.Tag is Item i) {
+                Process.Start(adExeFileName, i.Address);
+            }
         }
         #endregion
     }
