@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("xFX JumpStart")]
 [assembly: AssemblyProduct("AnyDeskAB")]
 [assembly: AssemblyCopyright("Copyright © xFX JumpStart 2017")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("AnyDesk is a registered trademark of philandro Software GmbH")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2017.6.8.291")]
-[assembly: AssemblyFileVersion("2017.6.8.291")]
+[assembly: AssemblyVersion("2017.6.9.293")]
+[assembly: AssemblyFileVersion("2017.6.9.293")]

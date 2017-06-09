@@ -21,3 +21,5 @@ Planned for the immediate future:
 * Allow to manually configure the location of all required resources
 * Add support to detect the location of the resources when running under non-Windows platforms
 * Cleanup and simplify the code
+
+AnyDesk is a registered trademark of philandro Software GmbH

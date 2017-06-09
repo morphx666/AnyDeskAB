@@ -301,7 +301,6 @@ namespace AnyDeskAB {
 
         #region TreeView Management
         private void UpdateUI() {
-            Debug.WriteLine("HIT");
             List<string> expandedNodes = Helpers.GetExpandedNodes(treeViewItems.Nodes);
 
             // Dirty trick to prevent flickering
