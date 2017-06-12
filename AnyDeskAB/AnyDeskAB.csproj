@@ -53,7 +53,6 @@
     <Compile Include="Classes\AnyDesk\IADItem.cs" />
     <Compile Include="Classes\Helpers.cs" />
     <Compile Include="Classes\Item.cs" />
-    <Compile Include="Classes\ReadFile.cs" />
     <Compile Include="Controls\ScrollableTreeView.cs">
       <SubType>Component</SubType>
     </Compile>

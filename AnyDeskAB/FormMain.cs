@@ -82,7 +82,7 @@ namespace AnyDeskAB {
             StringBuilder sb = new StringBuilder();
             List<Item> items = groups[0].GetAllItems();
 
-            foreach(string line in ReadFile.ReadLines(adConfigFileName)) {
+            foreach(string line in Helpers.ReadLines(adConfigFileName)) {
                 if(line.Contains("ad.roster.items")) {
                     string data = "ad.roster.items=";
                     foreach(Item i in items) {
@@ -245,7 +245,7 @@ namespace AnyDeskAB {
             Group adg = new Group(null, "");
             List<string> expandedNodes = new List<string>();
 
-            foreach(string line in ReadFile.ReadLines(adConfigFileName)) {
+            foreach(string line in Helpers.ReadLines(adConfigFileName)) {
                 if(line.Contains("ad.roster.items")) {
                     foreach(string token in line.Split('=')[1].Split(';')) {
                         string[] tokens = token.Split(',');
