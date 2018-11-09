@@ -22,6 +22,8 @@ namespace AnyDeskAB {
         private int maxConfBackups = 10;
         private long lastConfigUpdate;
 
+        private System.Threading.Timer filterTimer;
+
         private TreeNode selectedNode;
         private bool ignoreTextBoxEvents = false;
         private bool isDragging = false;
@@ -55,6 +57,8 @@ namespace AnyDeskAB {
                     IsBackground = true
                 };
                 draggingMonitor.Start();
+
+                filterTimer = new System.Threading.Timer(new TimerCallback((s) => this.Invoke((MethodInvoker)delegate { UpdateUI(); })), null, Timeout.Infinite, Timeout.Infinite);
             } else {
                 MessageBox.Show("Unable to initialize", "Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
@@ -207,7 +211,7 @@ namespace AnyDeskAB {
             this.KeyDown += (object o, KeyEventArgs e) => {
                 switch(e.KeyCode) {
                     case Keys.F2:
-                        selectedNode?.BeginEdit();
+                        if(this.ActiveControl == treeViewItems) selectedNode?.BeginEdit();
                         break;
                     case Keys.Enter:
                         Connect();
@@ -216,10 +220,12 @@ namespace AnyDeskAB {
                         e.SuppressKeyPress = true;
                         break;
                     case Keys.Delete:
-                        DeleteItem();
+                        if(this.ActiveControl == treeViewItems) DeleteItem();
                         break;
                 }
             };
+
+            textBoxFilter.TextChanged += (object o, EventArgs e) => filterTimer.Change(500, Timeout.Infinite);
         }
 
         void HandleNodeSelected(TreeNode n) {
@@ -333,9 +339,7 @@ namespace AnyDeskAB {
             treeViewItems.Visible = false;
             treeViewItems.BeginUpdate();
             treeViewItems.Nodes.Clear();
-            foreach(Group g in groups.OrderBy(grp => grp.Name)) {
-                AddGroupNode(g, null);
-            }
+            foreach(Group g in groups.OrderBy(grp => grp.Name)) AddGroupNode(g, null);
 
             if(selectedNode != null) SelectNode(treeViewItems.Nodes, selectedNode.Text);
             Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
@@ -364,6 +368,8 @@ namespace AnyDeskAB {
         }
 
         private TreeNode AddGroupNode(Group g, TreeNode parentNode) {
+            string filter = textBoxFilter.Text;
+
             TreeNode n = new TreeNode(g.Name) {
                 NodeFont = new Font(this.Font, FontStyle.Bold),
                 Tag = g
@@ -383,8 +389,10 @@ namespace AnyDeskAB {
                     }
                 }
 
-                ntn = n.Nodes.Add(i.ToString());
-                ntn.Tag = i;
+                if(i.ToString().ToLower().Contains(filter)) {
+                    ntn = n.Nodes.Add(i.ToString());
+                    ntn.Tag = i;
+                }
             }
 
             foreach(Group sg in g.Groups.OrderBy(sgt => sgt.Name)) AddGroupNode(sg, n);

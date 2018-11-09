@@ -41,6 +41,7 @@
             this.labelAlias = new System.Windows.Forms.Label();
             this.labelID = new System.Windows.Forms.Label();
             this.labelName = new System.Windows.Forms.Label();
+            this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.contextMenuStripOptions.SuspendLayout();
             this.panelDetails.SuspendLayout();
             this.SuspendLayout();
@@ -56,7 +57,7 @@
             this.treeViewItems.LabelEdit = true;
             this.treeViewItems.Location = new System.Drawing.Point(12, 14);
             this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(453, 466);
+            this.treeViewItems.Size = new System.Drawing.Size(453, 435);
             this.treeViewItems.TabIndex = 0;
             // 
             // contextMenuStripOptions
@@ -71,51 +72,51 @@
             this.sep03ToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.contextMenuStripOptions.Name = "contextMenuStripGroups";
-            this.contextMenuStripOptions.Size = new System.Drawing.Size(133, 132);
+            this.contextMenuStripOptions.Size = new System.Drawing.Size(181, 154);
             // 
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.connectToolStripMenuItem.Text = "Connect...";
             // 
             // sep01toolStripMenuItem
             // 
             this.sep01toolStripMenuItem.Name = "sep01toolStripMenuItem";
-            this.sep01toolStripMenuItem.Size = new System.Drawing.Size(129, 6);
+            this.sep01toolStripMenuItem.Size = new System.Drawing.Size(177, 6);
             // 
             // addGroupToolStripMenuItem
             // 
             this.addGroupToolStripMenuItem.Name = "addGroupToolStripMenuItem";
-            this.addGroupToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.addGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addGroupToolStripMenuItem.Text = "Add Group";
             // 
             // addItemToolStripMenuItem
             // 
             this.addItemToolStripMenuItem.Name = "addItemToolStripMenuItem";
-            this.addItemToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.addItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addItemToolStripMenuItem.Text = "Add Item";
             // 
             // sep02ToolStripMenuItem
             // 
             this.sep02ToolStripMenuItem.Name = "sep02ToolStripMenuItem";
-            this.sep02ToolStripMenuItem.Size = new System.Drawing.Size(129, 6);
+            this.sep02ToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renameToolStripMenuItem.Text = "Rename...";
             // 
             // sep03ToolStripMenuItem
             // 
             this.sep03ToolStripMenuItem.Name = "sep03ToolStripMenuItem";
-            this.sep03ToolStripMenuItem.Size = new System.Drawing.Size(129, 6);
+            this.sep03ToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // panelDetails
@@ -181,12 +182,24 @@
             this.labelName.TabIndex = 0;
             this.labelName.Text = "labelName";
             // 
+            // textBoxFilter
+            // 
+            this.textBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.textBoxFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.textBoxFilter.Location = new System.Drawing.Point(12, 455);
+            this.textBoxFilter.Name = "textBoxFilter";
+            this.textBoxFilter.Size = new System.Drawing.Size(453, 25);
+            this.textBoxFilter.TabIndex = 2;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(752, 494);
+            this.Controls.Add(this.textBoxFilter);
             this.Controls.Add(this.panelDetails);
             this.Controls.Add(this.treeViewItems);
             this.DoubleBuffered = true;
@@ -200,6 +213,7 @@
             this.panelDetails.ResumeLayout(false);
             this.panelDetails.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -221,6 +235,7 @@
         private System.Windows.Forms.Label labelAlias;
         private System.Windows.Forms.TextBox textBoxDescription;
         private System.Windows.Forms.LinkLabel linkLabelConnect;
+        private System.Windows.Forms.TextBox textBoxFilter;
     }
 }
 
