@@ -275,26 +275,16 @@ namespace AnyDeskAB {
 
                 // Add any new items that may have been added from AnyDesk
                 List<Item> rgis = rg.GetAllItems();
-                foreach(Item i in adg.Items) {
-                    if(!rg.ItemExists(i)) rg.Items.Add((Item)i.Clone(rg));
-                }
+                foreach(Item i in adg.Items) if(!rg.ItemExists(i)) rg.Items.Add((Item)i.Clone(rg));
 
                 // Update any items that may have been changed from AnyDesk
-                foreach(Item i in rg.GetAllItems()) {
-                    i.Alias = adg.FindItem(i).Alias;
-                }
+                foreach(Item i in rg.GetAllItems()) i.Alias = adg.FindItem(i).Alias;
 
                 // Restore expanded nodes
-                foreach(XElement xml in xDoc.Descendants("node")) {
-                    expandedNodes.Add(xml.Value);
-                }
+                foreach(XElement xml in xDoc.Descendants("node")) expandedNodes.Add(xml.Value);
 
-                // Remove items already present in sub-groups
-                if(rg.Groups.Count > 0) {
-                    foreach(Group g in rg.Groups) {
-                        RemoveItems(rg, g);
-                    }
-                }
+                // Remove items from the main 'AnyDesk' group that are already present in sub-groups
+                rg.Groups.ForEach(g => RemoveItems(rg, g));
             }
 
             if(!groups.Any()) {
@@ -308,12 +298,13 @@ namespace AnyDeskAB {
         }
 
         private void RemoveItems(Group parent, Group child) {
-            foreach(Group g in child.Groups) {
-                RemoveItems(parent, g);
-            }
-            foreach(Item i in child.Items) {
-                if(parent.ItemExists(i)) parent.Items.Remove(i);
-            }
+            foreach(Group g in child.Groups) RemoveItems(parent, g);
+            foreach(Item i in child.Items) if(parent.ItemExists(i)) parent.Items.Remove(i);
+        }
+
+        private void RestoreItems(Group child) {
+            foreach(Group g in child.Groups) RestoreItems(g);
+            foreach(Item i in child.Items) if(!groups[0].ItemExists(i)) groups[0].Items.Add(i);
         }
 
         private bool SetupPaths() {
@@ -388,7 +379,7 @@ namespace AnyDeskAB {
             foreach(Item i in g.Items.OrderBy(it => it.Name)) {
                 foreach(TreeNode tn in treeViewItems.Nodes) {
                     if((tn.Tag is Item) && ((Item)tn.Tag) == i) {
-                        int a = 1;
+                        int a = 1; // STOP?
                     }
                 }
 
@@ -396,9 +387,7 @@ namespace AnyDeskAB {
                 ntn.Tag = i;
             }
 
-            foreach(Group sg in g.Groups.OrderBy(sgt => sgt.Name)) {
-                AddGroupNode(sg, n);
-            }
+            foreach(Group sg in g.Groups.OrderBy(sgt => sgt.Name)) AddGroupNode(sg, n);
 
             return n;
         }
@@ -421,25 +410,27 @@ namespace AnyDeskAB {
             int overItemCount = 0;
             while(!abortThreads) {
                 if(isDragging && dragginOverNode != null) {
-                    if(draggingLocation.Y <= scrollMargin) {
-                        treeViewItems.ScrollUp();
-                    } else if(draggingLocation.Y >= treeViewItems.Height - scrollMargin) {
-                        treeViewItems.ScrollDown();
-                    } else if(lastOver != dragginOverNode) {
-                        this.Invoke((MethodInvoker)delegate {
-                            if(dragginOverNode.Nodes.Count > 0 && !dragginOverNode.IsExpanded) {
-                                lastOver = dragginOverNode;
-                                overItemCount = 0;
-                            } else {
+                    try {
+                        if(draggingLocation.Y <= scrollMargin) {
+                            treeViewItems.ScrollUp();
+                        } else if(draggingLocation.Y >= treeViewItems.Height - scrollMargin) {
+                            treeViewItems.ScrollDown();
+                        } else if(lastOver != dragginOverNode) {
+                            this.Invoke((MethodInvoker)delegate {
+                                if(dragginOverNode.Nodes.Count > 0 && !dragginOverNode.IsExpanded) {
+                                    lastOver = dragginOverNode;
+                                    overItemCount = 0;
+                                } else {
+                                    lastOver = null;
+                                }
+                            });
+                        } else if(lastOver == dragginOverNode && lastOver != null && ++overItemCount >= 10) {
+                            this.Invoke((MethodInvoker)delegate {
+                                dragginOverNode.Expand();
                                 lastOver = null;
-                            }
-                        });
-                    } else if(lastOver == dragginOverNode && lastOver != null && ++overItemCount >= 10) {
-                        this.Invoke((MethodInvoker)delegate {
-                            dragginOverNode.Expand();
-                            lastOver = null;
-                        });
-                    }
+                            });
+                        }
+                    } catch { }
                 }
                 Thread.Sleep(100);
             }
@@ -478,18 +469,12 @@ namespace AnyDeskAB {
 
             if(ans == DialogResult.Yes) {
                 if(selectedNode.Tag is Item i) {
-                    ((Group)i.Parent).Items.Remove(i);
+                    Group g = ((Group)i.Parent);
+                    if(g != groups[0]) groups[0].Items.Add((Item)i.Clone(i.Parent));
+                    g.Items.Remove(i);
                 } else {
-                    nodeType = "Group";
                     Group g = (Group)selectedNode.Tag;
-                    while(g.Items.Any()) {
-                        groups[0].Items.Add((Item)g.Items[0].Clone(groups[0]));
-                        g.Items.Remove(g.Items[0]);
-                    }
-                    while(g.Groups.Any()) {
-                        groups[0].Groups.Add((Group)g.Groups[0].Clone(groups[0]));
-                        g.Groups.Remove(g.Groups[0]);
-                    }
+                    RestoreItems(g);
                     ((Group)g.Parent).Groups.Remove(g);
                 }
                 SaveSettings(true);
