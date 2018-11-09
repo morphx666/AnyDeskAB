@@ -1,16 +1,15 @@
-﻿using System;
+﻿using AnyDeskAB.Classes;
+using AnyDeskAB.Classes.AnyDesk;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.IO;
-using AnyDeskAB.Classes;
-using AnyDeskAB.Classes.AnyDesk;
-using System.Diagnostics;
 using System.Xml.Linq;
 
 namespace AnyDeskAB {
@@ -262,13 +261,14 @@ namespace AnyDeskAB {
                 Group rg = groups[0];
 
                 // Remove any items that may have been removed from AnyDesk
-                bool isDone;
+                bool isDone = false;
                 do {
                     isDone = true;
                     foreach(Item i in rg.GetAllItems()) {
                         if(!adg.ItemExists(i)) {
                             ((Group)i.Parent).Items.Remove(i);
                             isDone = false;
+                            break;
                         }
                     }
                 } while(!isDone);
@@ -288,6 +288,13 @@ namespace AnyDeskAB {
                 foreach(XElement xml in xDoc.Descendants("node")) {
                     expandedNodes.Add(xml.Value);
                 }
+
+                // Remove items already present in sub-groups
+                if(rg.Groups.Count > 0) {
+                    foreach(Group g in rg.Groups) {
+                        RemoveItems(rg, g);
+                    }
+                }
             }
 
             if(!groups.Any()) {
@@ -300,12 +307,21 @@ namespace AnyDeskAB {
             Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
         }
 
+        private void RemoveItems(Group parent, Group child) {
+            foreach(Group g in child.Groups) {
+                RemoveItems(parent, g);
+            }
+            foreach(Item i in child.Items) {
+                if(parent.ItemExists(i)) parent.Items.Remove(i);
+            }
+        }
+
         private bool SetupPaths() {
             settingsFileName = Path.Combine((new DirectoryInfo(Application.UserAppDataPath)).Parent.FullName, "settings.dat");
             adConfigFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\Roaming\AnyDesk\user.conf");
             adExeFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"AnyDesk\AnyDesk.exe");
 
-            // Is the user like me and likes to install programs on multiple drives?
+            // Is the user like me and likes to install programs on a drive other that C:?
             foreach(DriveInfo di in DriveInfo.GetDrives()) {
                 adExeFileName = di.Name.Substring(0, 1) + adExeFileName.Substring(1);
                 if(File.Exists(adExeFileName)) break;
@@ -368,8 +384,16 @@ namespace AnyDeskAB {
                 parentNode.Nodes.Add(n);
             }
 
+            TreeNode ntn;
             foreach(Item i in g.Items.OrderBy(it => it.Name)) {
-                n.Nodes.Add(i.ToString()).Tag = i;
+                foreach(TreeNode tn in treeViewItems.Nodes) {
+                    if((tn.Tag is Item) && ((Item)tn.Tag) == i) {
+                        int a = 1;
+                    }
+                }
+
+                ntn = n.Nodes.Add(i.ToString());
+                ntn.Tag = i;
             }
 
             foreach(Group sg in g.Groups.OrderBy(sgt => sgt.Name)) {
