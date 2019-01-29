@@ -25,173 +25,173 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.treeViewItems = new AnyDeskAB.Controls.ScrollableTreeView();
-            this.contextMenuStripOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sep01toolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
-            this.addGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sep02ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sep03ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelDetails = new System.Windows.Forms.Panel();
-            this.linkLabelConnect = new System.Windows.Forms.LinkLabel();
-            this.textBoxDescription = new System.Windows.Forms.TextBox();
-            this.labelAlias = new System.Windows.Forms.Label();
-            this.labelID = new System.Windows.Forms.Label();
-            this.labelName = new System.Windows.Forms.Label();
-            this.textBoxFilter = new System.Windows.Forms.TextBox();
-            this.contextMenuStripOptions.SuspendLayout();
-            this.panelDetails.SuspendLayout();
+            this.ContextMenuStripOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ConnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Sep01toolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.AddGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Sep02ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.RenameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Sep03ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.DeleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.PanelDetails = new System.Windows.Forms.Panel();
+            this.LinkLabelConnect = new System.Windows.Forms.LinkLabel();
+            this.TextBoxDescription = new System.Windows.Forms.TextBox();
+            this.LabelAlias = new System.Windows.Forms.Label();
+            this.LabelID = new System.Windows.Forms.Label();
+            this.LabelName = new System.Windows.Forms.Label();
+            this.TextBoxFilter = new System.Windows.Forms.TextBox();
+            this.TreeViewItems = new AnyDeskAB.Controls.ScrollableTreeView();
+            this.ContextMenuStripOptions.SuspendLayout();
+            this.PanelDetails.SuspendLayout();
             this.SuspendLayout();
             // 
-            // treeViewItems
+            // ContextMenuStripOptions
             // 
-            this.treeViewItems.AllowDrop = true;
-            this.treeViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ContextMenuStripOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ConnectToolStripMenuItem,
+            this.Sep01toolStripMenuItem,
+            this.AddGroupToolStripMenuItem,
+            this.AddItemToolStripMenuItem,
+            this.Sep02ToolStripMenuItem,
+            this.RenameToolStripMenuItem,
+            this.Sep03ToolStripMenuItem,
+            this.DeleteToolStripMenuItem});
+            this.ContextMenuStripOptions.Name = "contextMenuStripGroups";
+            this.ContextMenuStripOptions.Size = new System.Drawing.Size(133, 132);
+            // 
+            // ConnectToolStripMenuItem
+            // 
+            this.ConnectToolStripMenuItem.Name = "ConnectToolStripMenuItem";
+            this.ConnectToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.ConnectToolStripMenuItem.Text = "Connect...";
+            // 
+            // Sep01toolStripMenuItem
+            // 
+            this.Sep01toolStripMenuItem.Name = "Sep01toolStripMenuItem";
+            this.Sep01toolStripMenuItem.Size = new System.Drawing.Size(129, 6);
+            // 
+            // AddGroupToolStripMenuItem
+            // 
+            this.AddGroupToolStripMenuItem.Name = "AddGroupToolStripMenuItem";
+            this.AddGroupToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.AddGroupToolStripMenuItem.Text = "Add Group";
+            // 
+            // AddItemToolStripMenuItem
+            // 
+            this.AddItemToolStripMenuItem.Name = "AddItemToolStripMenuItem";
+            this.AddItemToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.AddItemToolStripMenuItem.Text = "Add Item";
+            // 
+            // Sep02ToolStripMenuItem
+            // 
+            this.Sep02ToolStripMenuItem.Name = "Sep02ToolStripMenuItem";
+            this.Sep02ToolStripMenuItem.Size = new System.Drawing.Size(129, 6);
+            // 
+            // RenameToolStripMenuItem
+            // 
+            this.RenameToolStripMenuItem.Name = "RenameToolStripMenuItem";
+            this.RenameToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.RenameToolStripMenuItem.Text = "Rename...";
+            // 
+            // Sep03ToolStripMenuItem
+            // 
+            this.Sep03ToolStripMenuItem.Name = "Sep03ToolStripMenuItem";
+            this.Sep03ToolStripMenuItem.Size = new System.Drawing.Size(129, 6);
+            // 
+            // DeleteToolStripMenuItem
+            // 
+            this.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem";
+            this.DeleteToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.DeleteToolStripMenuItem.Text = "Delete";
+            // 
+            // PanelDetails
+            // 
+            this.PanelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PanelDetails.Controls.Add(this.LinkLabelConnect);
+            this.PanelDetails.Controls.Add(this.TextBoxDescription);
+            this.PanelDetails.Controls.Add(this.LabelAlias);
+            this.PanelDetails.Controls.Add(this.LabelID);
+            this.PanelDetails.Controls.Add(this.LabelName);
+            this.PanelDetails.Location = new System.Drawing.Point(471, 14);
+            this.PanelDetails.Name = "PanelDetails";
+            this.PanelDetails.Padding = new System.Windows.Forms.Padding(3);
+            this.PanelDetails.Size = new System.Drawing.Size(269, 466);
+            this.PanelDetails.TabIndex = 1;
+            // 
+            // LinkLabelConnect
+            // 
+            this.LinkLabelConnect.AutoSize = true;
+            this.LinkLabelConnect.Location = new System.Drawing.Point(7, 41);
+            this.LinkLabelConnect.Name = "LinkLabelConnect";
+            this.LinkLabelConnect.Size = new System.Drawing.Size(108, 17);
+            this.LinkLabelConnect.TabIndex = 5;
+            this.LinkLabelConnect.TabStop = true;
+            this.LinkLabelConnect.Text = "LinkLabelConnect";
+            // 
+            // TextBoxDescription
+            // 
+            this.TextBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TextBoxDescription.Location = new System.Drawing.Point(10, 78);
+            this.TextBoxDescription.Multiline = true;
+            this.TextBoxDescription.Name = "TextBoxDescription";
+            this.TextBoxDescription.Size = new System.Drawing.Size(253, 135);
+            this.TextBoxDescription.TabIndex = 4;
+            // 
+            // LabelAlias
+            // 
+            this.LabelAlias.AutoSize = true;
+            this.LabelAlias.Location = new System.Drawing.Point(7, 58);
+            this.LabelAlias.Name = "LabelAlias";
+            this.LabelAlias.Size = new System.Drawing.Size(66, 17);
+            this.LabelAlias.TabIndex = 3;
+            this.LabelAlias.Text = "LabelAlias";
+            // 
+            // LabelID
+            // 
+            this.LabelID.AutoSize = true;
+            this.LabelID.Location = new System.Drawing.Point(7, 24);
+            this.LabelID.Name = "LabelID";
+            this.LabelID.Size = new System.Drawing.Size(51, 17);
+            this.LabelID.TabIndex = 1;
+            this.LabelID.Text = "LabelID";
+            // 
+            // LabelName
+            // 
+            this.LabelName.AutoSize = true;
+            this.LabelName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelName.Location = new System.Drawing.Point(6, 3);
+            this.LabelName.Name = "LabelName";
+            this.LabelName.Size = new System.Drawing.Size(97, 21);
+            this.LabelName.TabIndex = 0;
+            this.LabelName.Text = "LabelName";
+            // 
+            // TextBoxFilter
+            // 
+            this.TextBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TextBoxFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.TextBoxFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.TextBoxFilter.Location = new System.Drawing.Point(12, 455);
+            this.TextBoxFilter.Name = "TextBoxFilter";
+            this.TextBoxFilter.Size = new System.Drawing.Size(453, 25);
+            this.TextBoxFilter.TabIndex = 2;
+            // 
+            // TreeViewItems
+            // 
+            this.TreeViewItems.AllowDrop = true;
+            this.TreeViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewItems.ContextMenuStrip = this.contextMenuStripOptions;
-            this.treeViewItems.HideSelection = false;
-            this.treeViewItems.LabelEdit = true;
-            this.treeViewItems.Location = new System.Drawing.Point(12, 14);
-            this.treeViewItems.Name = "treeViewItems";
-            this.treeViewItems.Size = new System.Drawing.Size(453, 435);
-            this.treeViewItems.TabIndex = 0;
-            // 
-            // contextMenuStripOptions
-            // 
-            this.contextMenuStripOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.connectToolStripMenuItem,
-            this.sep01toolStripMenuItem,
-            this.addGroupToolStripMenuItem,
-            this.addItemToolStripMenuItem,
-            this.sep02ToolStripMenuItem,
-            this.renameToolStripMenuItem,
-            this.sep03ToolStripMenuItem,
-            this.deleteToolStripMenuItem});
-            this.contextMenuStripOptions.Name = "contextMenuStripGroups";
-            this.contextMenuStripOptions.Size = new System.Drawing.Size(181, 154);
-            // 
-            // connectToolStripMenuItem
-            // 
-            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.connectToolStripMenuItem.Text = "Connect...";
-            // 
-            // sep01toolStripMenuItem
-            // 
-            this.sep01toolStripMenuItem.Name = "sep01toolStripMenuItem";
-            this.sep01toolStripMenuItem.Size = new System.Drawing.Size(177, 6);
-            // 
-            // addGroupToolStripMenuItem
-            // 
-            this.addGroupToolStripMenuItem.Name = "addGroupToolStripMenuItem";
-            this.addGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.addGroupToolStripMenuItem.Text = "Add Group";
-            // 
-            // addItemToolStripMenuItem
-            // 
-            this.addItemToolStripMenuItem.Name = "addItemToolStripMenuItem";
-            this.addItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.addItemToolStripMenuItem.Text = "Add Item";
-            // 
-            // sep02ToolStripMenuItem
-            // 
-            this.sep02ToolStripMenuItem.Name = "sep02ToolStripMenuItem";
-            this.sep02ToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
-            // 
-            // renameToolStripMenuItem
-            // 
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.renameToolStripMenuItem.Text = "Rename...";
-            // 
-            // sep03ToolStripMenuItem
-            // 
-            this.sep03ToolStripMenuItem.Name = "sep03ToolStripMenuItem";
-            this.sep03ToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
-            // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
-            // 
-            // panelDetails
-            // 
-            this.panelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDetails.Controls.Add(this.linkLabelConnect);
-            this.panelDetails.Controls.Add(this.textBoxDescription);
-            this.panelDetails.Controls.Add(this.labelAlias);
-            this.panelDetails.Controls.Add(this.labelID);
-            this.panelDetails.Controls.Add(this.labelName);
-            this.panelDetails.Location = new System.Drawing.Point(471, 14);
-            this.panelDetails.Name = "panelDetails";
-            this.panelDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.panelDetails.Size = new System.Drawing.Size(269, 466);
-            this.panelDetails.TabIndex = 1;
-            // 
-            // linkLabelConnect
-            // 
-            this.linkLabelConnect.AutoSize = true;
-            this.linkLabelConnect.Location = new System.Drawing.Point(7, 41);
-            this.linkLabelConnect.Name = "linkLabelConnect";
-            this.linkLabelConnect.Size = new System.Drawing.Size(105, 17);
-            this.linkLabelConnect.TabIndex = 5;
-            this.linkLabelConnect.TabStop = true;
-            this.linkLabelConnect.Text = "linkLabelConnect";
-            // 
-            // textBoxDescription
-            // 
-            this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDescription.Location = new System.Drawing.Point(10, 78);
-            this.textBoxDescription.Multiline = true;
-            this.textBoxDescription.Name = "textBoxDescription";
-            this.textBoxDescription.Size = new System.Drawing.Size(253, 135);
-            this.textBoxDescription.TabIndex = 4;
-            // 
-            // labelAlias
-            // 
-            this.labelAlias.AutoSize = true;
-            this.labelAlias.Location = new System.Drawing.Point(7, 58);
-            this.labelAlias.Name = "labelAlias";
-            this.labelAlias.Size = new System.Drawing.Size(63, 17);
-            this.labelAlias.TabIndex = 3;
-            this.labelAlias.Text = "labelAlias";
-            // 
-            // labelID
-            // 
-            this.labelID.AutoSize = true;
-            this.labelID.Location = new System.Drawing.Point(7, 24);
-            this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(48, 17);
-            this.labelID.TabIndex = 1;
-            this.labelID.Text = "labelID";
-            // 
-            // labelName
-            // 
-            this.labelName.AutoSize = true;
-            this.labelName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelName.Location = new System.Drawing.Point(6, 3);
-            this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(94, 21);
-            this.labelName.TabIndex = 0;
-            this.labelName.Text = "labelName";
-            // 
-            // textBoxFilter
-            // 
-            this.textBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.textBoxFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.textBoxFilter.Location = new System.Drawing.Point(12, 455);
-            this.textBoxFilter.Name = "textBoxFilter";
-            this.textBoxFilter.Size = new System.Drawing.Size(453, 25);
-            this.textBoxFilter.TabIndex = 2;
+            this.TreeViewItems.ContextMenuStrip = this.ContextMenuStripOptions;
+            this.TreeViewItems.HideSelection = false;
+            this.TreeViewItems.LabelEdit = true;
+            this.TreeViewItems.Location = new System.Drawing.Point(12, 14);
+            this.TreeViewItems.Name = "TreeViewItems";
+            this.TreeViewItems.Size = new System.Drawing.Size(453, 435);
+            this.TreeViewItems.TabIndex = 0;
             // 
             // FormMain
             // 
@@ -199,9 +199,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(752, 494);
-            this.Controls.Add(this.textBoxFilter);
-            this.Controls.Add(this.panelDetails);
-            this.Controls.Add(this.treeViewItems);
+            this.Controls.Add(this.TextBoxFilter);
+            this.Controls.Add(this.PanelDetails);
+            this.Controls.Add(this.TreeViewItems);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -209,9 +209,9 @@
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AnyDesk AddressBook";
-            this.contextMenuStripOptions.ResumeLayout(false);
-            this.panelDetails.ResumeLayout(false);
-            this.panelDetails.PerformLayout();
+            this.ContextMenuStripOptions.ResumeLayout(false);
+            this.PanelDetails.ResumeLayout(false);
+            this.PanelDetails.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -219,23 +219,23 @@
 
         #endregion
 
-        private AnyDeskAB.Controls.ScrollableTreeView treeViewItems;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStripOptions;
-        private System.Windows.Forms.ToolStripMenuItem addGroupToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator sep01toolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addItemToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator sep02ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator sep03ToolStripMenuItem;
-        private System.Windows.Forms.Panel panelDetails;
-        private System.Windows.Forms.Label labelName;
-        private System.Windows.Forms.Label labelID;
-        private System.Windows.Forms.Label labelAlias;
-        private System.Windows.Forms.TextBox textBoxDescription;
-        private System.Windows.Forms.LinkLabel linkLabelConnect;
-        private System.Windows.Forms.TextBox textBoxFilter;
+        private AnyDeskAB.Controls.ScrollableTreeView TreeViewItems;
+        private System.Windows.Forms.ContextMenuStrip ContextMenuStripOptions;
+        private System.Windows.Forms.ToolStripMenuItem AddGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RenameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem DeleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ConnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator Sep01toolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AddItemToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator Sep02ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator Sep03ToolStripMenuItem;
+        private System.Windows.Forms.Panel PanelDetails;
+        private System.Windows.Forms.Label LabelName;
+        private System.Windows.Forms.Label LabelID;
+        private System.Windows.Forms.Label LabelAlias;
+        private System.Windows.Forms.TextBox TextBoxDescription;
+        private System.Windows.Forms.LinkLabel LinkLabelConnect;
+        private System.Windows.Forms.TextBox TextBoxFilter;
     }
 }
 

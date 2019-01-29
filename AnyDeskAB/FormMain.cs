@@ -42,7 +42,7 @@ namespace AnyDeskAB {
             if(SetupPaths()) {
                 LoadAddressBook();
 
-                selectedNode = treeViewItems.Nodes[0];
+                selectedNode = TreeViewItems.Nodes[0];
                 selectedNode.Expand();
                 HandleNodeSelected(selectedNode);
 
@@ -70,7 +70,7 @@ namespace AnyDeskAB {
             string xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
                             <settings>
                                 <groups>{string.Concat(from Group g in groups select g.ToXML().ToString())}</groups>
-                                <expandedNodes>{string.Concat(from en in Helpers.GetExpandedNodes(treeViewItems.Nodes) select $"<node>{en}</node>")}</expandedNodes>
+                                <expandedNodes>{string.Concat(from en in Helpers.GetExpandedNodes(TreeViewItems.Nodes) select $"<node>{en}</node>")}</expandedNodes>
                             </settings>";
 
             XDocument.Parse(xml).Save(settingsFileName);
@@ -129,51 +129,51 @@ namespace AnyDeskAB {
                 }
             };
 
-            treeViewItems.MouseDoubleClick += (object o, MouseEventArgs e) => {
-                TreeNode n = treeViewItems.GetNodeAt(e.Location);
+            TreeViewItems.MouseDoubleClick += (object o, MouseEventArgs e) => {
+                TreeNode n = TreeViewItems.GetNodeAt(e.Location);
                 if(n == null || n.Tag is Group) return;
                 Connect();
             };
-            treeViewItems.MouseDown += (object o, MouseEventArgs e) => {
-                TreeNode n = treeViewItems.GetNodeAt(e.Location);
+            TreeViewItems.MouseDown += (object o, MouseEventArgs e) => {
+                TreeNode n = TreeViewItems.GetNodeAt(e.Location);
                 if(n == null || e.Button != MouseButtons.Right) return;
-                treeViewItems.SelectedNode = n;
+                TreeViewItems.SelectedNode = n;
             };
-            treeViewItems.MouseUp += delegate { isDragging = false; };
-            treeViewItems.DragLeave += delegate { isDragging = false; };
-            treeViewItems.DragEnter += delegate { isDragging = true; };
-            treeViewItems.AfterSelect += delegate {
-                selectedNode = treeViewItems.SelectedNode;
+            TreeViewItems.MouseUp += delegate { isDragging = false; };
+            TreeViewItems.DragLeave += delegate { isDragging = false; };
+            TreeViewItems.DragEnter += delegate { isDragging = true; };
+            TreeViewItems.AfterSelect += delegate {
+                selectedNode = TreeViewItems.SelectedNode;
 
                 if(selectedNode == null) return;
                 HandleNodeSelected(selectedNode);
             };
-            treeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
+            TreeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
                 if(e.Label != null && e.Label != "") {
                     ((ADItem)e.Node.Tag).Name = e.Label;
                     SaveSettings(true);
                 }
             };
-            treeViewItems.BeforeLabelEdit += (object o, NodeLabelEditEventArgs e) => e.CancelEdit = (e.Node.Parent == null);
-            treeViewItems.ItemDrag += (object o, ItemDragEventArgs e) => {
+            TreeViewItems.BeforeLabelEdit += (object o, NodeLabelEditEventArgs e) => e.CancelEdit = (e.Node.Parent == null);
+            TreeViewItems.ItemDrag += (object o, ItemDragEventArgs e) => {
                 selectedNode = (TreeNode)e.Item;
                 if(e.Button == MouseButtons.Left) {
                     isDragging = true;
-                    treeViewItems.SelectedNode = selectedNode;
-                    treeViewItems.DoDragDrop(selectedNode, DragDropEffects.Move);
+                    TreeViewItems.SelectedNode = selectedNode;
+                    TreeViewItems.DoDragDrop(selectedNode, DragDropEffects.Move);
                 }
             };
-            treeViewItems.DragOver += (object o, DragEventArgs e) => {
-                draggingLocation = treeViewItems.PointToClient(new Point(e.X, e.Y));
-                dragginOverNode = treeViewItems.GetNodeAt(draggingLocation);
+            TreeViewItems.DragOver += (object o, DragEventArgs e) => {
+                draggingLocation = TreeViewItems.PointToClient(new Point(e.X, e.Y));
+                dragginOverNode = TreeViewItems.GetNodeAt(draggingLocation);
                 if(dragginOverNode == null || dragginOverNode.Tag is Item) {
                     e.Effect = DragDropEffects.None;
                 } else {
                     e.Effect = e.AllowedEffect;
                 }
             };
-            treeViewItems.DragDrop += (object o, DragEventArgs e) => {
-                dragginOverNode = treeViewItems.GetNodeAt(treeViewItems.PointToClient(new Point(e.X, e.Y)));
+            TreeViewItems.DragDrop += (object o, DragEventArgs e) => {
+                dragginOverNode = TreeViewItems.GetNodeAt(TreeViewItems.PointToClient(new Point(e.X, e.Y)));
                 if(dragginOverNode != null) {
                     Group tg = (Group)dragginOverNode.Tag;
                     string nodeText = selectedNode.Text;
@@ -187,18 +187,18 @@ namespace AnyDeskAB {
                         tg.Groups.Add((Group)sg.Clone(sg));
                     }
                     SaveSettings(false);
-                    SelectNode(treeViewItems.Nodes, nodeText);
+                    SelectNode(TreeViewItems.Nodes, nodeText);
                 }
             };
 
-            connectToolStripMenuItem.Click += delegate { Connect(); };
-            addItemToolStripMenuItem.Click += delegate { AddItem(); };
-            addGroupToolStripMenuItem.Click += delegate { AddGroup(); };
-            renameToolStripMenuItem.Click += delegate { selectedNode.BeginEdit(); };
-            deleteToolStripMenuItem.Click += delegate { DeleteItem(); };
+            ConnectToolStripMenuItem.Click += delegate { Connect(); };
+            AddItemToolStripMenuItem.Click += delegate { AddItem(); };
+            AddGroupToolStripMenuItem.Click += delegate { AddGroup(); };
+            RenameToolStripMenuItem.Click += delegate { selectedNode.BeginEdit(); };
+            DeleteToolStripMenuItem.Click += delegate { DeleteItem(); };
 
-            textBoxDescription.TextChanged += delegate { if(!ignoreTextBoxEvents) ((Item)selectedNode.Tag).Description = textBoxDescription.Text; };
-            linkLabelConnect.Click += delegate { Connect(); };
+            TextBoxDescription.TextChanged += delegate { if(!ignoreTextBoxEvents) ((Item)selectedNode.Tag).Description = TextBoxDescription.Text; };
+            LinkLabelConnect.Click += delegate { Connect(); };
 
             this.FormClosing += delegate {
                 abortThreads = true;
@@ -211,7 +211,7 @@ namespace AnyDeskAB {
             this.KeyDown += (object o, KeyEventArgs e) => {
                 switch(e.KeyCode) {
                     case Keys.F2:
-                        if(this.ActiveControl == treeViewItems) selectedNode?.BeginEdit();
+                        if(this.ActiveControl == TreeViewItems) selectedNode?.BeginEdit();
                         break;
                     case Keys.Enter:
                         Connect();
@@ -220,27 +220,27 @@ namespace AnyDeskAB {
                         e.SuppressKeyPress = true;
                         break;
                     case Keys.Delete:
-                        if(this.ActiveControl == treeViewItems) DeleteItem();
+                        if(this.ActiveControl == TreeViewItems) DeleteItem();
                         break;
                 }
             };
 
-            textBoxFilter.TextChanged += (object o, EventArgs e) => filterTimer.Change(500, Timeout.Infinite);
+            TextBoxFilter.TextChanged += (object o, EventArgs e) => filterTimer.Change(500, Timeout.Infinite);
         }
 
         void HandleNodeSelected(TreeNode n) {
-            treeViewItems.SelectedNode = n;
+            TreeViewItems.SelectedNode = n;
 
             if(n.Tag is Group) {
-                connectToolStripMenuItem.Visible = false;
-                sep01toolStripMenuItem.Visible = false;
-                deleteToolStripMenuItem.Enabled = (n.Parent != null);
+                ConnectToolStripMenuItem.Visible = false;
+                Sep01toolStripMenuItem.Visible = false;
+                DeleteToolStripMenuItem.Enabled = (n.Parent != null);
             } else {
-                connectToolStripMenuItem.Visible = true;
-                sep01toolStripMenuItem.Visible = true;
-                deleteToolStripMenuItem.Enabled = true;
+                ConnectToolStripMenuItem.Visible = true;
+                Sep01toolStripMenuItem.Visible = true;
+                DeleteToolStripMenuItem.Enabled = true;
             }
-            renameToolStripMenuItem.Enabled = n.Parent != null;
+            RenameToolStripMenuItem.Enabled = n.Parent != null;
 
             UpdateDetails(n);
         }
@@ -300,7 +300,7 @@ namespace AnyDeskAB {
             }
 
             UpdateUI();
-            Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
+            Helpers.SetExpandedNodes(TreeViewItems.Nodes, expandedNodes);
         }
 
         private void RemoveItems(Group parent, Group child) {
@@ -330,45 +330,45 @@ namespace AnyDeskAB {
 
         #region TreeView Management
         private void UpdateUI() {
-            List<string> expandedNodes = Helpers.GetExpandedNodes(treeViewItems.Nodes);
+            List<string> expandedNodes = Helpers.GetExpandedNodes(TreeViewItems.Nodes);
 
             // Dirty trick to prevent flickering
-            this.BackgroundImage = new Bitmap(treeViewItems.Width, treeViewItems.Height);
-            treeViewItems.DrawToBitmap((Bitmap)this.BackgroundImage, new Rectangle(treeViewItems.Location, treeViewItems.Size));
+            this.BackgroundImage = new Bitmap(TreeViewItems.Width, TreeViewItems.Height);
+            TreeViewItems.DrawToBitmap((Bitmap)this.BackgroundImage, new Rectangle(TreeViewItems.Location, TreeViewItems.Size));
 
-            treeViewItems.Visible = false;
-            treeViewItems.BeginUpdate();
-            treeViewItems.Nodes.Clear();
+            TreeViewItems.Visible = false;
+            TreeViewItems.BeginUpdate();
+            TreeViewItems.Nodes.Clear();
             foreach(Group g in groups.OrderBy(grp => grp.Name)) AddGroupNode(g, null);
 
-            if(selectedNode != null) SelectNode(treeViewItems.Nodes, selectedNode.Text);
-            Helpers.SetExpandedNodes(treeViewItems.Nodes, expandedNodes);
+            if(selectedNode != null) SelectNode(TreeViewItems.Nodes, selectedNode.Text);
+            Helpers.SetExpandedNodes(TreeViewItems.Nodes, expandedNodes);
 
-            treeViewItems.EndUpdate();
-            treeViewItems.Visible = true;
+            TreeViewItems.EndUpdate();
+            TreeViewItems.Visible = true;
             this.BackgroundImage = null;
         }
 
         private void UpdateDetails(TreeNode n) {
             ignoreTextBoxEvents = true;
-            labelName.Text = n.Text;
+            LabelName.Text = n.Text;
             if(n.Tag is Item i) {
-                labelID.Text = i.Id;
-                linkLabelConnect.Text = i.Address;
-                labelAlias.Text = i.Alias;
-                textBoxDescription.Text = i.Description;
-                textBoxDescription.Visible = true;
+                LabelID.Text = i.Id;
+                LinkLabelConnect.Text = i.Address;
+                LabelAlias.Text = i.Alias;
+                TextBoxDescription.Text = i.Description;
+                TextBoxDescription.Visible = true;
             } else {
-                labelID.Text = "";
-                linkLabelConnect.Text = "";
-                labelAlias.Text = "";
-                textBoxDescription.Visible = false;
+                LabelID.Text = "";
+                LinkLabelConnect.Text = "";
+                LabelAlias.Text = "";
+                TextBoxDescription.Visible = false;
             }
             ignoreTextBoxEvents = false;
         }
 
         private TreeNode AddGroupNode(Group g, TreeNode parentNode) {
-            string filter = textBoxFilter.Text;
+            string filter = TextBoxFilter.Text;
 
             TreeNode n = new TreeNode(g.Name) {
                 NodeFont = new Font(this.Font, FontStyle.Bold),
@@ -376,14 +376,14 @@ namespace AnyDeskAB {
             };
 
             if(parentNode == null) {
-                treeViewItems.Nodes.Add(n);
+                TreeViewItems.Nodes.Add(n);
             } else {
                 parentNode.Nodes.Add(n);
             }
 
             TreeNode ntn;
             foreach(Item i in g.Items.OrderBy(it => it.Name)) {
-                foreach(TreeNode tn in treeViewItems.Nodes) {
+                foreach(TreeNode tn in TreeViewItems.Nodes) {
                     if((tn.Tag is Item) && ((Item)tn.Tag) == i) {
                         int a = 1; // STOP?
                     }
@@ -404,7 +404,7 @@ namespace AnyDeskAB {
             foreach(TreeNode n in nodes) {
                 if(n.Text == nodeText) {
                     n.EnsureVisible();
-                    treeViewItems.SelectedNode = n;
+                    TreeViewItems.SelectedNode = n;
                     selectedNode = n;
                     break;
                 }
@@ -420,9 +420,9 @@ namespace AnyDeskAB {
                 if(isDragging && dragginOverNode != null) {
                     try {
                         if(draggingLocation.Y <= scrollMargin) {
-                            treeViewItems.ScrollUp();
-                        } else if(draggingLocation.Y >= treeViewItems.Height - scrollMargin) {
-                            treeViewItems.ScrollDown();
+                            TreeViewItems.ScrollUp();
+                        } else if(draggingLocation.Y >= TreeViewItems.Height - scrollMargin) {
+                            TreeViewItems.ScrollDown();
                         } else if(lastOver != dragginOverNode) {
                             this.Invoke((MethodInvoker)delegate {
                                 if(dragginOverNode.Nodes.Count > 0 && !dragginOverNode.IsExpanded) {
@@ -456,7 +456,7 @@ namespace AnyDeskAB {
             Group ng = new Group(pg, "<New Group>");
             pg.Groups.Add(ng);
             selectedNode = AddGroupNode(ng, selectedNode);
-            treeViewItems.SelectedNode = selectedNode;
+            TreeViewItems.SelectedNode = selectedNode;
             selectedNode.Expand();
             selectedNode.BeginEdit();
         }
