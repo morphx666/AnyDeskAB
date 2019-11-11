@@ -36,12 +36,14 @@ namespace AnyDeskAB {
 
         private readonly Thread draggingMonitor;
         private readonly FileSystemWatcher adConfigMonitor;
+        private readonly FileSystemWatcher adThumbnailMonitor;
 
         public FormMain() {
             InitializeComponent();
 
             this.FormClosing += delegate {
                 adConfigMonitor.Dispose();
+                adThumbnailMonitor.Dispose();
                 filterTimer.Dispose();
             };
 
@@ -57,6 +59,12 @@ namespace AnyDeskAB {
                     NotifyFilter = NotifyFilters.LastWrite,
                     EnableRaisingEvents = true
                 };
+                adThumbnailMonitor = new FileSystemWatcher(adThumbnailsFolder) {
+                    Filter = "*.png",
+                    NotifyFilter = NotifyFilters.LastWrite,
+                    EnableRaisingEvents = true
+                };
+
                 SetupEventhandlers();
 
                 draggingMonitor = new Thread(DraggingMonitorLoop) {
@@ -148,6 +156,25 @@ namespace AnyDeskAB {
                         }
                     });
                 }
+            };
+
+            adThumbnailMonitor.Changed += (object o, FileSystemEventArgs e) => {
+                this.Invoke((MethodInvoker)delegate {
+                    TreeNode selectedItem = TreeViewItems.SelectedNode;
+                    if(selectedNode != null) {
+                        Item i = (Item)selectedNode.Tag;
+                        if(e.Name.Contains(i.ThumbnailId)) {
+                            while(true) {
+                                try {
+                                    PictureBoxThumbnail.Image = GetThumbnail(i.ThumbnailId);
+                                    break;
+                                } catch(Exception) {
+                                    Thread.Sleep(500);
+                                }
+                            }
+                        }
+                    }
+                });
             };
 
             TreeViewItems.MouseDoubleClick += (object o, MouseEventArgs e) => {
@@ -426,7 +453,13 @@ namespace AnyDeskAB {
         private Image GetThumbnail(string thumbnailId) {
             string tn = Path.Combine(adThumbnailsFolder, thumbnailId) + ".png";
             if(File.Exists(tn)) {
-                return Image.FromFile(tn);
+                Image img = Image.FromFile(tn);
+                Bitmap bmp = new Bitmap(img.Width, img.Height);
+                using(Graphics g = Graphics.FromImage(bmp)) {
+                    g.DrawImageUnscaled(img, 0, 0);
+                }
+                img.Dispose();
+                return bmp;
             } else {
                 return null;
             }
