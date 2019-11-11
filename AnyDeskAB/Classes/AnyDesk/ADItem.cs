@@ -15,18 +15,15 @@ namespace AnyDeskAB.Classes.AnyDesk {
             mName = name;
         }
 
-        public string Id { get { return mID; } }
+        public string Id { get => mID; }
+        public ADItem Parent { get => mParent; }
 
         public string Name {
-            get { return mName; }
+            get => mName;
             set {
                 mName = value;
                 NameChanged?.Invoke(this, new EventArgs());
             }
-        }
-
-        public ADItem Parent {
-            get { return mParent; }
         }
 
         public virtual XElement ToXML() {

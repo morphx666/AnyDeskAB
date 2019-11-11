@@ -6,12 +6,7 @@ namespace AnyDeskAB.Classes.AnyDesk {
         event EventHandler NameChanged;
 
         string Id { get; }
-
-        string Name {
-            get;
-            set;
-        }
-
+        string Name { get; set; }
         ADItem Parent { get; }
 
         XElement ToXML();

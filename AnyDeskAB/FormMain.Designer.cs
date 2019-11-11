@@ -35,6 +35,7 @@
             this.Sep03ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.DeleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PanelDetails = new System.Windows.Forms.Panel();
+            this.PictureBoxThumbnail = new System.Windows.Forms.PictureBox();
             this.LinkLabelConnect = new System.Windows.Forms.LinkLabel();
             this.TextBoxDescription = new System.Windows.Forms.TextBox();
             this.LabelAlias = new System.Windows.Forms.Label();
@@ -44,6 +45,7 @@
             this.TreeViewItems = new AnyDeskAB.Controls.ScrollableTreeView();
             this.ContextMenuStripOptions.SuspendLayout();
             this.PanelDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxThumbnail)).BeginInit();
             this.SuspendLayout();
             // 
             // ContextMenuStripOptions
@@ -109,6 +111,7 @@
             // 
             this.PanelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.PanelDetails.Controls.Add(this.PictureBoxThumbnail);
             this.PanelDetails.Controls.Add(this.LinkLabelConnect);
             this.PanelDetails.Controls.Add(this.TextBoxDescription);
             this.PanelDetails.Controls.Add(this.LabelAlias);
@@ -119,6 +122,16 @@
             this.PanelDetails.Padding = new System.Windows.Forms.Padding(3);
             this.PanelDetails.Size = new System.Drawing.Size(269, 466);
             this.PanelDetails.TabIndex = 1;
+            // 
+            // PictureBoxThumbnail
+            // 
+            this.PictureBoxThumbnail.BackColor = System.Drawing.SystemColors.Control;
+            this.PictureBoxThumbnail.Location = new System.Drawing.Point(10, 219);
+            this.PictureBoxThumbnail.Name = "PictureBoxThumbnail";
+            this.PictureBoxThumbnail.Size = new System.Drawing.Size(128, 128);
+            this.PictureBoxThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.PictureBoxThumbnail.TabIndex = 6;
+            this.PictureBoxThumbnail.TabStop = false;
             // 
             // LinkLabelConnect
             // 
@@ -212,6 +225,7 @@
             this.ContextMenuStripOptions.ResumeLayout(false);
             this.PanelDetails.ResumeLayout(false);
             this.PanelDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxThumbnail)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -236,6 +250,7 @@
         private System.Windows.Forms.TextBox TextBoxDescription;
         private System.Windows.Forms.LinkLabel LinkLabelConnect;
         private System.Windows.Forms.TextBox TextBoxFilter;
+        private System.Windows.Forms.PictureBox PictureBoxThumbnail;
     }
 }
 

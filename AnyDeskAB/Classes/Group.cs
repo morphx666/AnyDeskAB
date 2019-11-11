@@ -6,21 +6,16 @@ using System.Xml.Linq;
 
 namespace AnyDeskAB.Classes {
     public class Group : ADItem {
-        private List<Item> mItems;
-        private List<Group> mGroups;
+        private readonly List<Item> mItems;
+        private readonly List<Group> mGroups;
 
         public Group(ADItem parent, string name) : base(parent, Guid.NewGuid().ToString(), name) {
             mItems = new List<Item>();
             mGroups = new List<Group>();
         }
 
-        public List<Item> Items {
-            get { return mItems; }
-        }
-
-        public List<Group> Groups {
-            get { return mGroups; }
-        }
+        public List<Item> Items { get => mItems; }
+        public List<Group> Groups { get => mGroups; }
 
         public override XElement ToXML() {
             XElement xmlBase = base.ToXML();

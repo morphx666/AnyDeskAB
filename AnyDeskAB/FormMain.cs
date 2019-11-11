@@ -18,12 +18,14 @@ namespace AnyDeskAB {
         private List<Group> groups;
 
         private string adConfigFileName;
+        private string adTraceFileName;
         private string adExeFileName;
+        private string adThumbnailsFolder;
         private string settingsFileName;
-        private int maxConfBackups = 10;
+        private readonly int maxConfBackups = 10;
         private long lastConfigUpdate;
 
-        private System.Threading.Timer filterTimer;
+        private readonly System.Threading.Timer filterTimer;
 
         private TreeNode selectedNode;
         private bool ignoreTextBoxEvents = false;
@@ -32,14 +34,17 @@ namespace AnyDeskAB {
         private Point draggingLocation;
         TreeNode dragginOverNode;
 
-        private Thread draggingMonitor;
-
-        FileSystemWatcher adConfigMonitor;
+        private readonly Thread draggingMonitor;
+        private readonly FileSystemWatcher adConfigMonitor;
 
         public FormMain() {
             InitializeComponent();
 
-            // TODO: Inform the user some paths are invalid and quit the program
+            this.FormClosing += delegate {
+                adConfigMonitor.Dispose();
+                filterTimer.Dispose();
+            };
+
             if(SetupPaths()) {
                 LoadAddressBook();
 
@@ -61,6 +66,7 @@ namespace AnyDeskAB {
 
                 filterTimer = new System.Threading.Timer(new TimerCallback((s) => this.Invoke((MethodInvoker)delegate { UpdateUI(); })), null, Timeout.Infinite, Timeout.Infinite);
             } else {
+                // TODO: Inform the user which paths are invalid
                 MessageBox.Show("Unable to initialize", "Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
@@ -269,7 +275,10 @@ namespace AnyDeskAB {
                 if(line.Contains("ad.roster.items")) {
                     foreach(string token in line.Split('=')[1].Split(';')) {
                         string[] tokens = token.Split(',');
-                        adg.Items.Add(new Item(null, tokens[1], tokens[0], tokens[2]));
+                        adg.Items.Add(new Item(null, tokens[1],
+                                                     tokens[0],
+                                                     tokens[2],
+                                                     GetThumbnailId(tokens[0])));
                     }
                     break;
                 }
@@ -299,7 +308,10 @@ namespace AnyDeskAB {
                 foreach(Item i in adg.Items) if(!rg.ItemExists(i)) rg.Items.Add((Item)i.Clone(rg));
 
                 // Update any items that may have been changed from AnyDesk
-                foreach(Item i in rg.GetAllItems()) i.Alias = adg.FindItem(i).Alias;
+                foreach(Item i in rg.GetAllItems()) {
+                    i.Alias = adg.FindItem(i).Alias;
+                    i.ThumbnailId = adg.FindItem(i).ThumbnailId;
+                }
 
                 // Restore expanded nodes
                 foreach(XElement xml in xDoc.Descendants("node")) expandedNodes.Add(xml.Value);
@@ -318,6 +330,27 @@ namespace AnyDeskAB {
             Helpers.SetExpandedNodes(TreeViewItems.Nodes, expandedNodes);
         }
 
+        private string GetThumbnailId(string id) {
+            string line;
+            using(FileStream fs = new FileStream(adTraceFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+                using(StreamReader sr = new StreamReader(fs)) {
+                    while((line = sr.ReadLine()) != null) {
+                        if(line.Contains($"Sending a connection request for address {id}")) {
+                            while((line = sr.ReadLine()) != null) {
+                                if(line.Contains($"Saved thumbnail")) {
+                                    string[] tokens = line.Split('\\');
+                                    return tokens[tokens.Length - 1].TrimEnd('.').Split('.')[0];
+                                } else if(line.Contains("Sending a connection") || line.Contains("Stopping")) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return "";
+        }
+
         private void RemoveItems(Group parent, Group child) {
             foreach(Group g in child.Groups) RemoveItems(parent, g);
             foreach(Item i in child.Items) if(parent.ItemExists(i)) parent.Items.Remove(i);
@@ -331,6 +364,8 @@ namespace AnyDeskAB {
         private bool SetupPaths() {
             settingsFileName = Path.Combine((new DirectoryInfo(Application.UserAppDataPath)).Parent.FullName, "settings.dat");
             adConfigFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\Roaming\AnyDesk\user.conf");
+            adThumbnailsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\Roaming\AnyDesk\thumbnails");
+            adTraceFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\Roaming\AnyDesk\ad.trace");
             adExeFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"AnyDesk\AnyDesk.exe");
 
             // Is the user like me and likes to install programs on a drive other that C:?
@@ -339,7 +374,10 @@ namespace AnyDeskAB {
                 if(File.Exists(adExeFileName)) break;
             }
 
-            return File.Exists(adConfigFileName) && File.Exists(adExeFileName);
+            return File.Exists(adConfigFileName) &&
+                   File.Exists(adExeFileName) &&
+                   File.Exists(adTraceFileName) &&
+                   Directory.Exists(adThumbnailsFolder);
         }
         #endregion
 
@@ -373,13 +411,25 @@ namespace AnyDeskAB {
                 LabelAlias.Text = i.Alias;
                 TextBoxDescription.Text = i.Description;
                 TextBoxDescription.Visible = true;
+                PictureBoxThumbnail.Image = GetThumbnail(i.ThumbnailId);
+                PictureBoxThumbnail.Visible = true;
             } else {
                 LabelID.Text = "";
                 LinkLabelConnect.Text = "";
                 LabelAlias.Text = "";
                 TextBoxDescription.Visible = false;
+                PictureBoxThumbnail.Visible = false;
             }
             ignoreTextBoxEvents = false;
+        }
+
+        private Image GetThumbnail(string thumbnailId) {
+            string tn = Path.Combine(adThumbnailsFolder, thumbnailId) + ".png";
+            if(File.Exists(tn)) {
+                return Image.FromFile(tn);
+            } else {
+                return null;
+            }
         }
 
         private TreeNode AddGroupNode(Group g, TreeNode parentNode) {

@@ -7,31 +7,36 @@ namespace AnyDeskAB.Classes {
         private string mAddress;
         private string mAlias;
         private string mDescription;
+        private string mThumbnailId;
 
-        public Item(ADItem parent, string id, string address, string alias) : base(parent, id, alias) {
+        public Item(ADItem parent, string id, string address, string alias, string thumbnailId) : base(parent, id, alias) {
             mAddress = address;
             mAlias = alias;
             mDescription = "";
+            mThumbnailId = thumbnailId;
 
             base.NameChanged += delegate { mAlias = base.Name; };
         }
 
-        public string Address {
-            get { return mAddress; }
+        public string Address { get => mAddress; }
+
+        public string ThumbnailId {
+            get => mThumbnailId;
+            set => mThumbnailId = value;
         }
 
         public string Alias {
-            get { return mAlias; }
-            set { mAlias = value; }
+            get => mAlias;
+            set => mAlias = value;
         }
 
         public string Description {
-            get { return mDescription; }
-            set { mDescription = value; }
+            get => mDescription;
+            set => mDescription = value;
         }
 
         public override string ToString() {
-            return mAlias == "" ? mAddress : mAlias;
+            return string.IsNullOrEmpty(mAlias) ? mAddress : mAlias;
         }
 
         public override XElement ToXML() {
@@ -41,6 +46,7 @@ namespace AnyDeskAB.Classes {
                                 <address>{mAddress}</address>
                                 <alias>{mAlias}</alias>
                                 <description>{mDescription}</description>
+                                <thumbnailId>{mThumbnailId}</thumbnailId>
                             </item>";
 
             xmlBase.Add(XElement.Parse(xml));
@@ -48,11 +54,14 @@ namespace AnyDeskAB.Classes {
         }
 
         public static Item FromXML(ADItem parent, XElement xml) {
+            string thumbnailId = "";
+
             string id = xml.Elements("id").First().Value;
             XElement xmlItem = xml.Elements("item").First();
             string address = xmlItem.Elements("address").First().Value;
             string alias = xmlItem.Elements("alias").First().Value;
-            Item i = new Item(parent, id, address, alias) {
+            try { thumbnailId = xmlItem.Elements("thumbnailId").First().Value; } catch { }
+            Item i = new Item(parent, id, address, alias, thumbnailId) {
                 Description = xmlItem.Elements("description").First().Value
             };
             return i;
