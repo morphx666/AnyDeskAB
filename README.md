@@ -7,12 +7,12 @@ Eventually, it should provide a fully featured AddressBook system for [AnyDesk](
 At this moment, this is what's working:
 * Create groups and sub-groups to organize all connection items
 * Easily drag & drop items across groups
-* Connect to any remote machine by double clicking any connection item
+* Connect to any remote machine by double clicking a connection item
 * Support custom descriptions for each connection item
-* Automatically detect when connection items are added, removed or changed within AnyDesk's user interface
-* Automatically update AnyDesk's configuration when changes are performed in the addressbook
-* A history of up to 10 backups of AnyDesk's configuration file are created whenever the addressbook is changed
-* Thumbnails display
+* Automatically detect when connection items are added, removed or changed from AnyDesk's user interface
+* Automatically update AnyDesk's configuration when changes are made in the addressbook
+* A backup of up to 10 configuration files is kept whenever changes are made from within AnyDeskAB
+* Thumbnails display for each connection item (if available)
 
 Planned for the immediate future:
 * A modern UI
@@ -23,4 +23,4 @@ Planned for the immediate future:
 * Add support to detect the location of the resources when running under non-Windows platforms
 * Cleanup and simplify the code
 
-AnyDesk is a registered trademark of philandro Software GmbH
+[AnyDesk](https://anydesk.com/) is a registered trademark of [philandro Software GmbH](https://philandro.com/)
