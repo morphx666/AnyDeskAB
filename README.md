@@ -12,11 +12,12 @@ At this moment, this is what's working:
 * Automatically detect when connection items are added, removed or changed within AnyDesk's user interface
 * Automatically update AnyDesk's configuration when changes are performed in the addressbook
 * A history of up to 10 backups of AnyDesk's configuration file are created whenever the addressbook is changed
+* Thumbnails display
 
 Planned for the immediate future:
 * A modern UI
 * Investigate if there's anyway to detect the online state of the connection items
-* Investigate if there's a way to match the thumbnails to the connection items
+* ~~Investigate if there's a way to match the thumbnails to the connection items~~
 * Try to preserve AnyDesk's connection items order when updating the configuration file
 * Allow to manually configure the location of all required resources
 * Add support to detect the location of the resources when running under non-Windows platforms
