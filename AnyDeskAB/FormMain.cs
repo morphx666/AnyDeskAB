@@ -71,7 +71,7 @@ namespace AnyDeskAB {
             string xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
                             <settings>
                                 <groups>{string.Concat(from Group g in groups select g.ToXML().ToString())}</groups>
-                                <expandedNodes>{string.Concat(from en in Helpers.GetExpandedNodes(TreeViewItems.Nodes) select $"<node>{en}</node>")}</expandedNodes>
+                                <expandedNodes>{string.Concat(from en in Helpers.GetExpandedNodes(TreeViewItems.Nodes) select $"<node>{(new XText(en)).ToString()}</node>")}</expandedNodes>
                             </settings>";
 
             XDocument.Parse(xml).Save(settingsFileName);
@@ -159,13 +159,13 @@ namespace AnyDeskAB {
             TreeViewItems.DragEnter += delegate { isDragging = true; };
             TreeViewItems.AfterSelect += delegate {
                 selectedNode = TreeViewItems.SelectedNode;
-
                 if(selectedNode == null) return;
                 HandleNodeSelected(selectedNode);
             };
             TreeViewItems.AfterLabelEdit += (object o, NodeLabelEditEventArgs e) => {
-                if(e.Label != null && e.Label != "") {
+                if(!string.IsNullOrEmpty(e.Label)) {
                     ((ADItem)e.Node.Tag).Name = e.Label;
+                    LabelName.Text = e.Label;
                     SaveSettings(true);
                 }
             };
@@ -400,7 +400,7 @@ namespace AnyDeskAB {
             foreach(Item i in g.Items.OrderBy(it => it.Name)) {
                 foreach(TreeNode tn in TreeViewItems.Nodes) {
                     if((tn.Tag is Item) && ((Item)tn.Tag) == i) {
-                        int a = 1; // STOP?
+                        Debugger.Break();
                     }
                 }
 
