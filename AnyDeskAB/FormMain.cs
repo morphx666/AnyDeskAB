@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -125,7 +126,21 @@ namespace AnyDeskAB {
             adConfigMonitor.Changed += (object o, FileSystemEventArgs e) => {
                 if(e.FullPath == adConfigFileName && (DateTime.Now.Ticks - lastConfigUpdate > 500000)) {
                     lastConfigUpdate = DateTime.Now.Ticks;
-                    this.Invoke((MethodInvoker)delegate { LoadAddressBook(); });
+                    this.Invoke((MethodInvoker)delegate {
+                        while(true) {
+                            try {
+                                LoadAddressBook();
+                                break;
+                            } catch(IOException) {
+                                Thread.Sleep(500);
+                            } catch(Exception ex) {
+                                MessageBox.Show($"An error has occurred while trying to load AnyDesk's Address Book: {ex.Message}",
+                                    "Error loading AnyDesk's Address Book",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                break;
+                            }
+                        }
+                    });
                 }
             };
 
