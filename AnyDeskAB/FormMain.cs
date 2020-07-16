@@ -305,7 +305,7 @@ namespace AnyDeskAB {
                         adg.Items.Add(new Item(null, tokens[1],
                                                      tokens[0],
                                                      tokens[2],
-                                                     GetThumbnailId(tokens[0])));
+                                                     GetThumbnailId(tokens[0], tokens[2])));
                     }
                     break;
                 }
@@ -316,6 +316,10 @@ namespace AnyDeskAB {
                 groups.Add(Group.FromXML(null, xDoc.Descendants("adItem").First()));
 
                 Group rg = groups[0];
+
+                // TODO: What do we do here?
+                //       Items from settings.dat should have preference above AnyDesk's settings
+                //       Probably useful if we want to share "settings.dat" across different machines
 
                 // Remove any items that may have been removed from AnyDesk
                 bool isDone = false;
@@ -357,17 +361,21 @@ namespace AnyDeskAB {
             Helpers.SetExpandedNodes(TreeViewItems.Nodes, expandedNodes);
         }
 
-        private string GetThumbnailId(string id) {
+        private string GetThumbnailId(string id, string alias) {
+            const string connStr = "Sending a connection request for address";
+            const string saveStr = "Saved thumbnail to";
+            const string stopStr = "Stopping session";
+
             string line;
             using(FileStream fs = new FileStream(adTraceFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                 using(StreamReader sr = new StreamReader(fs)) {
                     while((line = sr.ReadLine()) != null) {
-                        if(line.Contains($"Sending a connection request for address {id}")) {
+                        if(line.Contains(connStr) && (line.Contains(id) || (alias != "" && line.Contains(alias)))) {
                             while((line = sr.ReadLine()) != null) {
-                                if(line.Contains($"Saved thumbnail")) {
+                                if(line.Contains(saveStr)) {
                                     string[] tokens = line.Split('\\');
                                     return tokens[tokens.Length - 1].TrimEnd('.').Split('.')[0];
-                                } else if(line.Contains("Sending a connection") || line.Contains("Stopping")) {
+                                } else if(line.Contains(connStr) || line.Contains(stopStr)) {
                                     break;
                                 }
                             }
@@ -453,12 +461,12 @@ namespace AnyDeskAB {
         private Image GetThumbnail(string thumbnailId) {
             string tn = Path.Combine(adThumbnailsFolder, thumbnailId) + ".png";
             if(File.Exists(tn)) {
-                Image img = Image.FromFile(tn);
-                Bitmap bmp = new Bitmap(img.Width, img.Height);
-                using(Graphics g = Graphics.FromImage(bmp)) {
-                    g.DrawImageUnscaled(img, 0, 0);
+                Bitmap bmp;
+                using(Image img = Image.FromFile(tn)) {
+                    bmp = new Bitmap(img.Width, img.Height);
+                    using(Graphics g = Graphics.FromImage(bmp))
+                        g.DrawImageUnscaled(img, 0, 0);
                 }
-                img.Dispose();
                 return bmp;
             } else {
                 return null;
